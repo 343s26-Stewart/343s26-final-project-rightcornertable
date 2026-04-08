@@ -11,3 +11,21 @@ nav {
 nav a {
   margin-right: 12px;
 }
+
+#forecast-result {
+  margin-top: 24px;
+}
+
+#forecast-result h2 {
+  margin-bottom: 8px;
+}
+
+.error {
+  color: #c0392b;
+}
+
+.api-credit {
+  margin-top: 16px;
+  font-size: 0.85em;
+  color: #555;
+}
