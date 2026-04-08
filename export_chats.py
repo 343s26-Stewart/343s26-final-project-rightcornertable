@@ -13,6 +13,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlparse
 
 WS_ROOT = Path.cwd()   # The script is run from the workspace root
 WS_HASH = Path.cwd()   # Will be found by searching workspaceStorage
@@ -34,18 +35,68 @@ def get_workspace_storage_dir() -> Path:
     return base / "Code" / "User" / "workspaceStorage"
 
 
+def normalize_workspace_path(value: object) -> list[str]:
+    """Normalize workspace paths from VS Code metadata into strings."""
+    if isinstance(value, str):
+        path = value
+
+        if path.startswith("file://"):
+            parsed = urlparse(path)
+            path = unquote(parsed.path)
+            if parsed.netloc and os.name == "nt":
+                path = f"//{parsed.netloc}{path}"
+
+        if os.name == "nt" and path.startswith("/") and re.match(r"/[A-Za-z]:", path):
+            path = path[1:]
+
+        try:
+            return [str(Path(path).resolve())]
+        except Exception:
+            return [path]
+
+    if isinstance(value, dict):
+        for key in ("folder", "path", "uri", "workspace"):
+            if key in value:
+                return normalize_workspace_path(value[key])
+        return []
+
+    if isinstance(value, list):
+        paths = []
+        for item in value:
+            paths.extend(normalize_workspace_path(item))
+        return paths
+
+    return []
+
+
+def workspace_path_matches(candidate: str, target: str) -> bool:
+    """Return true when two workspace paths refer to the same folder."""
+    candidate_norm = candidate.replace("\\", "/").lower()
+    target_norm = target.replace("\\", "/").lower()
+    return candidate_norm == target_norm or candidate_norm.endswith(target_norm) or target_norm.endswith(candidate_norm)
+
+
 def find_workspace_hash_dir(storage_dir: Path) -> Path:
     """Find the workspaceStorage directory for the current workspace."""
     cwd_str = str(WS_ROOT.resolve())
+    if not storage_dir.exists():
+        raise RuntimeError(f"VS Code workspace storage directory not found: {storage_dir}")
+
     for d in storage_dir.iterdir():
         meta = d / "workspace.json"
         if not meta.exists():
             continue
         data = json.loads(meta.read_text())
-        folder = data.get("folder", "")
-        if folder.endswith(cwd_str):
-            return d
-    raise RuntimeError("VS Code workspace not found")
+        candidates = normalize_workspace_path(data.get("folder") or data.get("folders") or data.get("workspace") or data.get("rootPath"))
+        for candidate in candidates:
+            if workspace_path_matches(candidate, cwd_str):
+                return d
+
+    raise RuntimeError(
+        f"VS Code workspace not found in storage directory: {storage_dir}\n"
+        f"Current workspace root: {cwd_str}\n"
+        "Open the folder in VS Code and retry, or use an open workspace that matches this path."
+    )
 
 
 def find_jsonl_files(workspace_dir: Path) -> list[Path]:

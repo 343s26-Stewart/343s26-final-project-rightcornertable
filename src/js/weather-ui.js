@@ -4,9 +4,21 @@
  */
 
 import { getWeatherForTrip } from './weather.js';
+import { savePlan } from './storage.js';
 
 const form = document.getElementById('trip-form');
 const resultSection = document.getElementById('forecast-result');
+const calendarContainer = document.getElementById('trip-calendar');
+const selectedDateDisplay = document.getElementById('selected-date-display');
+const hiddenDateInput = document.getElementById('trip-date');
+
+const today = normalizeDate(new Date());
+const maxAdvanceDays = 15;
+const maxDate = addDays(today, maxAdvanceDays);
+let selectedDate = today;
+let currentPlan = null;
+
+initCalendar();
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -19,6 +31,14 @@ form.addEventListener('submit', async (e) => {
 
   try {
     const { location, forecast } = await getWeatherForTrip(destination, date);
+    currentPlan = {
+      id: `plan-${Date.now()}`,
+      destination,
+      date,
+      location,
+      forecast,
+      savedAt: null,
+    };
     renderForecast(location, forecast);
   } catch (err) {
     resultSection.innerHTML = `<p class="error">${err.message}</p>`;
@@ -52,8 +72,29 @@ function renderForecast(location, forecast) {
         <tr><th scope="row">Sunset</th><td>${fmtTime(forecast.sunset)}</td></tr>
       </tbody>
     </table>
+    <button id="save-plan-button" type="button">Save this plan</button>
+    <p id="save-notice" class="save-notice" aria-live="polite"></p>
     <p class="api-credit">Weather data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required).</p>
   `;
+
+  document.getElementById('save-plan-button').addEventListener('click', handleSaveClick);
+}
+
+function handleSaveClick() {
+  if (!currentPlan) return;
+  if (currentPlan.savedAt) {
+    showSaveMessage('This trip is already saved.');
+    return;
+  }
+
+  currentPlan.savedAt = new Date().toISOString();
+  savePlan(currentPlan);
+  showSaveMessage('Saved to Saved Plans.');
+}
+
+function showSaveMessage(message) {
+  const notice = document.getElementById('save-notice');
+  if (notice) notice.textContent = message;
 }
 
 // Format YYYY-MM-DD as a readable date string
@@ -62,4 +103,112 @@ function formatDate(dateStr) {
   return new Date(`${dateStr}T00:00:00`).toLocaleDateString(undefined, {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
+}
+
+function initCalendar() {
+  selectedDate = today;
+  hiddenDateInput.value = formatDateValue(selectedDate);
+  updateSelectedDateMessage(selectedDate);
+  renderCalendar();
+  calendarContainer.addEventListener('click', handleCalendarClick);
+}
+
+function renderCalendar() {
+  const months = getMonthRange(today, maxDate);
+  calendarContainer.innerHTML = months.map((month) => renderMonth(month)).join('');
+}
+
+function getMonthRange(startDate, endDate) {
+  const months = [];
+  let current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  while (current <= endDate) {
+    months.push({ year: current.getFullYear(), month: current.getMonth() });
+    current.setMonth(current.getMonth() + 1);
+  }
+  return months;
+}
+
+function renderMonth({ year, month }) {
+  const monthStart = new Date(year, month, 1);
+  const monthName = monthStart.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  const firstWeekday = monthStart.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekdaysHtml = weekdayLabels.map((day) => `<div>${day}</div>`).join('');
+
+  const cells = [];
+  for (let i = 0; i < firstWeekday; i += 1) {
+    cells.push('<div class="calendar-cell empty"></div>');
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const date = normalizeDate(new Date(year, month, day));
+    const dayValue = formatDateValue(date);
+    const isDisabled = date < today || date > maxDate;
+    const isSelected = selectedDate && dayValue === formatDateValue(selectedDate);
+    const classes = ['calendar-cell', 'date-button'];
+    if (isSelected) classes.push('selected');
+
+    cells.push(`
+      <button
+        type="button"
+        class="${classes.join(' ')}"
+        data-date="${dayValue}"
+        ${isDisabled ? 'disabled aria-disabled="true"' : ''}
+      >
+        ${day}
+      </button>
+    `);
+  }
+
+  return `
+    <section class="calendar-month">
+      <header>
+        <h2>${monthName}</h2>
+      </header>
+      <div class="calendar-weekdays">${weekdaysHtml}</div>
+      <div class="calendar-grid">${cells.join('')}</div>
+    </section>
+  `;
+}
+
+function handleCalendarClick(event) {
+  const button = event.target.closest('.date-button');
+  if (!button || button.disabled) return;
+  const value = button.dataset.date;
+  selectedDate = parseDateValue(value);
+  hiddenDateInput.value = value;
+  updateSelectedDateMessage(selectedDate);
+  renderCalendar();
+}
+
+function updateSelectedDateMessage(date) {
+  selectedDateDisplay.textContent = `Selected trip date: ${formatDate(formatDateValue(date))}`;
+}
+
+function formatDateValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseDateValue(dateValue) {
+  const [year, month, day] = dateValue.split('-').map(Number);
+  return normalizeDate(new Date(year, month - 1, day));
+}
+
+function normalizeDate(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function addDays(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return normalizeDate(result);
+}
+
+function valueToDateString(date) {
+  return formatDate(date);
 }
