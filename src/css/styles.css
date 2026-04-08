@@ -24,6 +24,26 @@ nav a {
   color: #c0392b;
 }
 
+.forecast-table {
+  border-collapse: collapse;
+  margin-top: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.forecast-table th,
+.forecast-table td {
+  text-align: left;
+  padding: 6px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.forecast-table th[scope="row"] {
+  font-weight: normal;
+  color: #555;
+  white-space: nowrap;
+}
+
 .api-credit {
   margin-top: 16px;
   font-size: 0.85em;

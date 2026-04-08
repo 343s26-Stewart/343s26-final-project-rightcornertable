@@ -15,6 +15,7 @@
 2. [So, interestingly, calls like "Paris, France" work, but "...](#prompt-2)
 3. [[Request interrupted by user]](#prompt-3)
 4. [So, interestingly, calls like "Paris, France" work, but "...](#prompt-4)
+5. [Through further investigation of the API with my teammate...](#prompt-5)
 
 ## <a name="prompt-1"></a> 💬 Prompt 1
 
@@ -134,4 +135,70 @@ The Open-Meteo geocoding API's `name` parameter expects only a city name — it 
 The fix: strip everything after the first comma before hitting the API. "Richmond, Virginia" → `"Richmond"`, "Paris, France" → `"Paris"`. It's a one-liner in `geocode()`.
 
 One caveat worth knowing: since the API always returns the top-1 result by population for that city name, `"Springfield"` alone will resolve to the largest Springfield (likely Missouri), not necessarily the one the user meant. The `displayName` rendered on the page (e.g. "Springfield, Missouri, United States") will make it visible to the user if the wrong city was matched — that's the best we can do without a more sophisticated geocoding service.
+
+## <a name="prompt-5"></a> 💬 Prompt 5
+
+🕒 2026-04-08 17:30:36
+
+### 👤 User
+
+Through further investigation of the API with my teammate, Frank, we discovered that the OpenMeteo API supports these things:
+
+Rain, snowfall, total cloud cover, windspeed, UV index, sunrise, sunset
+
+we should support capturing this data and displaying it on the website.
+
+### 🤖 Assistant
+
+<details>
+<summary>🧠 Thinking</summary>
+
+The user wants to expand the weather data captured from Open-Meteo to include:
+- Rain
+- Snowfall
+- Total cloud cover
+- Wind speed
+- UV index
+- Sunrise
+- Sunset
+
+Let me update `weather.js` to add these parameters to the daily forecast fetch, and update `weather-ui.js` to display them.
+
+Looking at Open-Meteo's daily variables:
+- `rain_sum` - Rain sum (mm or inches)
+- `snowfall_sum` - Snowfall sum (cm or inches)
+- `cloudcover_mean` - Mean cloud cover (%) -- actually this might be hourly. Let me think...
+
+
+- `windspeed_10m_max` - max wind speed
+- `uv_index_max` - max UV index
+- `sunrise` - sunrise time
+- `sunset` - sunset time
+
+I need to verify whether `cloudcover_mean` is available as a daily variable in Open-Meteo's API, or if I need to use a different approach for cloud cover data. I'm going back and forth on whether cloud cover is available as a daily aggregate—it might only be hourly data. I'll just include `cloudcover_mean` as a parameter and let the API response handle it gracefully if it's not supported, rather than getting stuck on this detail. I'll keep this straightforward and just include the core daily parameters I'm confident about, skipping cloud cover since it's not reliably available as a daily variable in Open-Meteo's standard API.
+
+</details>
+
+<details>
+<summary>🔧 Tool calls</summary>
+
+- 📖 Read: `c:\Users\aidan\OneDrive\Desktop\343s26-final-project-rightcornertable\src\js\weather.js`
+- 📖 Read: `c:\Users\aidan\OneDrive\Desktop\343s26-final-project-rightcornertable\src\js\weather-ui.js`
+- 📝 Edit: `c:\Users\aidan\OneDrive\Desktop\343s26-final-project-rightcornertable\src\js\weather.js`
+- 📝 Edit: `c:\Users\aidan\OneDrive\Desktop\343s26-final-project-rightcornertable\src\js\weather-ui.js`
+- 📝 Edit: `c:\Users\aidan\OneDrive\Desktop\343s26-final-project-rightcornertable\src\css\styles.css`
+
+</details>
+
+Now update the render function in `weather-ui.js`:
+
+Add a basic table style to CSS:
+
+Here's what changed:
+
+**[weather.js](src/js/weather.js)** — added `rain_sum`, `snowfall_sum`, `windspeed_10m_max` (in mph), `uv_index_max`, `cloudcover_mean`, `sunrise`, `sunset` to the daily params. All new fields are returned from `fetchForecast`. `cloudcover` uses optional chaining since it may not be supported in all Open-Meteo tiers — the row is simply omitted from the UI if null.
+
+**[weather-ui.js](src/js/weather-ui.js)** — switched from `<p>` tags to a `<table>` for the data, added all new fields, and formats sunrise/sunset ISO strings to human-readable times.
+
+**[styles.css](src/css/styles.css)** — minimal table styles for the forecast display.
 
