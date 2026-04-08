@@ -26,12 +26,32 @@ form.addEventListener('submit', async (e) => {
 });
 
 function renderForecast(location, forecast) {
+  // Format sunrise/sunset ISO strings (e.g. "2025-07-04T06:12") to "6:12 AM"
+  const fmtTime = (isoStr) => new Date(isoStr).toLocaleTimeString(undefined, {
+    hour: 'numeric', minute: '2-digit',
+  });
+
+  const cloudRow = forecast.cloudcover !== null
+    ? `<tr><th scope="row">Cloud Cover</th><td>${forecast.cloudcover}%</td></tr>`
+    : '';
+
   resultSection.innerHTML = `
     <h2>Forecast for ${location.displayName}</h2>
     <p><strong>Date:</strong> ${formatDate(forecast.date)}</p>
-    <p><strong>Conditions:</strong> ${forecast.description}</p>
-    <p><strong>High / Low:</strong> ${forecast.tempMax}°F / ${forecast.tempMin}°F</p>
-    <p><strong>Precipitation:</strong> ${forecast.precip} in</p>
+    <table class="forecast-table">
+      <tbody>
+        <tr><th scope="row">Conditions</th><td>${forecast.description}</td></tr>
+        <tr><th scope="row">High / Low</th><td>${forecast.tempMax}°F / ${forecast.tempMin}°F</td></tr>
+        <tr><th scope="row">Precipitation</th><td>${forecast.precip} in</td></tr>
+        <tr><th scope="row">Rain</th><td>${forecast.rain} in</td></tr>
+        <tr><th scope="row">Snowfall</th><td>${forecast.snowfall} in</td></tr>
+        <tr><th scope="row">Wind Speed (max)</th><td>${forecast.windspeed} mph</td></tr>
+        <tr><th scope="row">UV Index (max)</th><td>${forecast.uvIndex}</td></tr>
+        ${cloudRow}
+        <tr><th scope="row">Sunrise</th><td>${fmtTime(forecast.sunrise)}</td></tr>
+        <tr><th scope="row">Sunset</th><td>${fmtTime(forecast.sunset)}</td></tr>
+      </tbody>
+    </table>
     <p class="api-credit">Weather data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required).</p>
   `;
 }
