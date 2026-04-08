@@ -24,9 +24,10 @@
       <label for="destination">Destination</label><br />
       <input type="text" id="destination" name="destination" placeholder="e.g. Asheville, NC" required /><br /><br />
 
-      <label for="trip-date">Date</label><br />
-      <input type="date" id="trip-date" name="trip-date" required /><br /><br />
-
+      <label id="trip-calendar-label">Date</label><br />
+      <div id="trip-calendar" class="calendar" aria-labelledby="trip-calendar-label" aria-describedby="selected-date-display"></div>
+      <input type="hidden" id="trip-date" name="trip-date" required />
+      <p id="selected-date-display" class="selected-date-display">Select a date from the calendar up to 16 days from today.</p>
       <button type="submit">Get Forecast</button>
     </form>
 
