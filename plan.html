@@ -20,19 +20,21 @@
     <h1>Plan a Trip</h1>
     <p>Enter a destination and date to get the weather forecast and activity ideas.</p>
 
-    <form id="trip-form">
-      <label for="destination">Destination</label><br />
-      <input type="text" id="destination" name="destination" placeholder="e.g. Asheville, NC" required /><br /><br />
+    <div class="plan-layout">
+      <form id="trip-form">
+        <label for="destination">Destination</label><br />
+        <input type="text" id="destination" name="destination" placeholder="e.g. Harrisonburg, VA" required /><br /><br />
 
-      <label id="trip-calendar-label">Date</label><br />
-      <div id="trip-calendar" class="calendar" aria-labelledby="trip-calendar-label" aria-describedby="selected-date-display"></div>
-      <input type="hidden" id="trip-date" name="trip-date" required />
-      <p id="selected-date-display" class="selected-date-display">Select a date from the calendar up to 16 days from today.</p>
-      <button type="submit">Get Forecast</button>
-    </form>
+        <label id="trip-calendar-label">Date</label><br />
+        <div id="trip-calendar" class="calendar" role="group" aria-labelledby="trip-calendar-label" aria-describedby="selected-date-display"></div>
+        <input type="hidden" id="trip-date" name="trip-date" required />
+        <p id="selected-date-display" class="selected-date-display">Select a date from the calendar up to 16 days from today.</p>
+        <button type="submit">Get Forecast</button>
+      </form>
 
-    <!-- Weather results are injected here by weather-ui.js -->
-    <section id="forecast-result" aria-live="polite"></section>
+      <!-- Weather results are injected here by weather-ui.js -->
+      <section id="forecast-result" aria-live="polite"></section>
+    </div>
   </main>
 
   <script type="module" src="js/weather-ui.js"></script>
