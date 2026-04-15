@@ -1,33 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tripcast</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
 
-  <nav>
-    <a href="index.html"><strong>Tripcast</strong></a>
-    <a href="index.html">Home</a>
-    <a href="plan.html">Plan a Trip</a>
-    <a href="saved.html">Saved Plans</a>
-    <a href="about.html">About</a>
-  </nav>
+<body class="homepage">
 
-  <main>
-    <h1>Welcome to Tripcast</h1>
-    <p>Tripcast is a weather-aware activity planner. Enter a destination and date to get a forecast and activity recommendations.</p>
+  <header class="top-bar">
+    <a href="saved.html" class="top-bar-button book-link" aria-label="Saved plans">
+      <img src="icons/book.png" alt="" />
+    </a>
+    <a href="index.html" class="top-bar-title">Tripcast</a>
+    <a href="settings.html" class="top-bar-button settings-link" aria-label="Settings">
+      <img src="icons/settings.png" alt="" />
+    </a>
+  </header>
 
-    <h2>How it works</h2>
-    <ol>
-      <li>Go to <a href="plan.html">Plan a Trip</a> and enter a destination and date.</li>
-      <li>Tripcast fetches real weather data for that location.</li>
-      <li>You get activity suggestions based on the forecast conditions.</li>
-      <li>Save plans to revisit them on the <a href="saved.html">Saved Plans</a> page.</li>
-    </ol>
+  <main class="hero">
+    <h1 class="hero-title">Where To?</h1>
+    <form id="trip-form" class="hero-form">
+      <input id="destination" class="hero-input" type="text" placeholder="Enter City, Zip Code, or Address"
+        aria-label="Destination" required />
+
+      <span id="trip-calendar-label" class="sr-only">Trip Date</span>
+      <div id="trip-calendar" class="calendar" role="group" aria-labelledby="trip-calendar-label"
+        aria-describedby="selected-date-display"></div>
+      <input type="hidden" id="trip-date" name="trip-date" required />
+      <p id="selected-date-display" class="selected-date-display">Select a date from the calendar up to 16 days from
+        today.</p>
+
+      <button class="confirm-button" type="submit">Confirm</button>
+    </form>
   </main>
 
+  <script type="module" src="js/weather-ui.js"></script>
+  <script src="js/theme.js"></script>
 </body>
+
 </html>
