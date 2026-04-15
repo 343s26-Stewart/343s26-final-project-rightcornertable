@@ -165,10 +165,14 @@ function renderCards() {
         </div>
       </div>
       <div class="plan-details">
+        <div class="hourly-chart-card saved-chart-card">
+          <h3>24 Hour Temperature</h3>
+          <canvas class="saved-hourly-chart" width="760" height="260"></canvas>
+        </div>
         <table class="forecast-table">
           <tbody>
             <tr><th scope="row">Conditions</th><td>${plan.forecast.description}</td></tr>
-            <tr><th scope="row">High / Low</th><td>${plan.forecast.tempMax}°F / ${plan.forecast.tempMin}°F</td></tr>
+            <tr><th scope="row">High / Low</th><td>${plan.forecast.tempMax}${plan.forecast.tempUnit} / ${plan.forecast.tempMin}${plan.forecast.tempUnit}</td></tr>
             <tr><th scope="row">Precipitation</th><td>${plan.forecast.precip} in</td></tr>
             <tr><th scope="row">Rain</th><td>${plan.forecast.rain} in</td></tr>
             <tr><th scope="row">Snowfall</th><td>${plan.forecast.snowfall} in</td></tr>
@@ -182,6 +186,11 @@ function renderCards() {
     `;
 
     listContainer.appendChild(card);
+
+    const chartCanvas = card.querySelector('.saved-hourly-chart');
+    if (chartCanvas && plan.forecast.hourly?.times?.length && plan.forecast.hourly?.temperatures?.length) {
+      drawSavedChart(chartCanvas, plan.forecast.hourly, plan.forecast.tempUnit, plan.forecast.date);
+    }
   });
 
   main.appendChild(listContainer);
@@ -247,6 +256,81 @@ function formatTime(isoString) {
   return new Date(isoString).toLocaleTimeString(undefined, {
     hour: 'numeric', minute: '2-digit',
   });
+}
+
+function drawSavedChart(canvas, hourly, tempUnit, date) {
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+
+  const filtered = hourly.times.map((time, index) => ({ time, temp: hourly.temperatures[index] }))
+    .filter((entry) => entry.time.startsWith(date));
+  if (filtered.length === 0) return;
+
+  const labels = filtered.map((entry) => entry.time.slice(11, 16));
+  const values = filtered.map((entry) => entry.temp);
+  const maxTemp = Math.max(...values);
+  const minTemp = Math.min(...values);
+  const padding = 42;
+  const chartWidth = width - padding * 2;
+  const chartHeight = height - padding * 2;
+
+  const positions = values.map((temp, index) => ({
+    x: padding + (chartWidth * index) / (values.length - 1),
+    y: padding + chartHeight * (1 - (temp - minTemp) / (maxTemp - minTemp || 1)),
+    temp,
+    label: labels[index],
+  }));
+
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.strokeStyle = '#d1d5db';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 0; i <= 4; i += 1) {
+    const y = padding + (chartHeight * i) / 4;
+    ctx.moveTo(padding, y);
+    ctx.lineTo(width - padding, y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = '#4b5563';
+  ctx.font = '10px Garamond, serif';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i += 1) {
+    const tempValue = Math.round(maxTemp - ((maxTemp - minTemp) / 4) * i);
+    const y = padding + (chartHeight * i) / 4 + 4;
+    ctx.fillText(`${tempValue}°`, padding - 8, y);
+  }
+
+  ctx.strokeStyle = '#c15f3c';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  positions.forEach((point, index) => {
+    if (index === 0) ctx.moveTo(point.x, point.y);
+    else ctx.lineTo(point.x, point.y);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = '#c15f3c';
+  positions.forEach((point) => {
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = '#111827';
+  ctx.font = '10px Garamond, serif';
+  ctx.textAlign = 'center';
+  positions.forEach((point, index) => {
+    if (index % Math.ceil(positions.length / 6) !== 0 && index !== positions.length - 1) return;
+    ctx.fillText(point.label, point.x, height - 10);
+  });
+
+  ctx.textAlign = 'left';
+  ctx.fillText(`Temp (${tempUnit})`, padding, padding - 12);
 }
 
 // --- Events ---

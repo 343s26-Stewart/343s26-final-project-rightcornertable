@@ -429,6 +429,67 @@ nav a {
   color: #c0392b;
 }
 
+.hourly-chart-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  padding: 18px;
+  margin: 16px auto;
+  overflow-x: auto;
+  max-width: 760px;
+}
+
+.forecast-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.forecast-table {
+  margin: 16px auto 0;
+}
+
+.save-notice,
+.api-credit {
+  max-width: 760px;
+}
+
+.hourly-chart-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-family: Garamond, serif;
+}
+
+#hourly-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.hourly-chart-card {
+  position: relative;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  background: rgba(17, 24, 39, 0.95);
+  color: white;
+  font-family: Garamond, serif;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
 .forecast-table {
   border-collapse: collapse;
   margin-top: 8px;
