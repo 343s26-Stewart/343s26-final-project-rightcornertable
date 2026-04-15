@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Tripcast</title>
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body class="settings-page">
+
+    <header class="top-bar">
+        <a href="saved.html" class="top-bar-button book-link" aria-label="Saved plans">
+            <img src="icons/book.png" alt="" />
+        </a>
+        <a href="index.html" class="top-bar-title">Tripcast</a>
+        <a href="settings.html" class="top-bar-button settings-link" aria-label="Settings">
+            <img src="icons/settings.png" alt="" />
+        </a>
+    </header>
+
+    <main class="settings-main">
+        <h1 class="hero-title">Settings</h1>
+        <form class="settings-form">
+            <div class="settings-row">
+                <label for="theme-select">Theme</label>
+                <select id="theme-select" name="theme">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <label for="units-select">Temperature</label>
+                <select id="units-select" name="units">
+                    <option value="fahrenheit">Fahrenheit</option>
+                    <option value="celsius">Celsius</option>
+                </select>
+            </div>
+
+            <button type="submit" class="confirm-button">Confirm</button>
+            <button type="button" class="secret-button" id="secret-buttonid">Secret</button>
+        </form>
+    </main>
+
+    <script src="js/theme.js"></script>
+</body>
+
+</html>

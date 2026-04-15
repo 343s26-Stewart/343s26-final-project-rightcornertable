@@ -1,7 +1,304 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  max-width: 1100px;
+  margin: 0;
+  background: #ffffff;
+  color: #111;
+}
+
+body.dark-mode {
+  background: #2f2f2f;
+  color: #ffffff;
+}
+
+body.dark-mode .top-bar {
+  background: #333;
+  border-bottom-color: #555;
+}
+
+body.dark-mode .top-bar-title,
+body.dark-mode .hero-title,
+body.dark-mode .settings-main h1,
+body.dark-mode .settings-row label,
+body.dark-mode .sr-only,
+body.dark-mode .selected-date-display,
+body.dark-mode .date-button,
+body.dark-mode .calendar-weekdays div,
+body.dark-mode .calendar-cell {
+  color: #ffffff;
+}
+
+body.dark-mode .settings-form {
+}
+
+body.dark-mode select,
+body.dark-mode .hero-input {
+  background: #4c4c4c;
+  color: #fff;
+  border-color: #666;
+}
+
+body.dark-mode .calendar-month {
+  background: #414141;
+  border-color: #555;
+}
+
+body.dark-mode .date-button {
+  background: #4c4c4c;
+}
+
+body.dark-mode .date-button:hover:not(:disabled) {
+  background: #5c5c5c;
+}
+
+body.dark-mode .date-button.selected {
+  background: #c15f3c;
+}
+
+body.dark-mode .confirm-button,
+body.dark-mode .secret-button {
+  background: #c15f3c;
+  color: #fff;
+}
+
+body.dark-mode .top-bar-button {
+  border-color: #fff;
+}
+
+body.secret-bg {
+  background-color: #000;
+  background-image: url("../imgs/dr-stew-portrait.jpeg");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+body.secret-bg.secret-landscape {
+  background-image: url("../imgs/dr-stew-landscape.jpg");
+}
+
+body.secret-bg.secret-portrait {
+  background-image: url("../imgs/dr-stew-portrait.jpeg");
+}
+
+.homepage {
+  min-height: 100vh;
+  font-family: Garamond, serif;
+  color: #111;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #ddd;
+  background: #ffffff;
+  font: garamond, serif;
+}
+
+.top-bar-title {
+  font-size: 2.75rem;
+  font-weight: 700;
+  font: garamond, serif;
+
+}
+
+.top-bar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #333;
+  background: transparent;
+  color: #111;
+  padding: 0;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  font-family: garamond, serif;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.top-bar-button img {
+  width: 22px;
+  height: 22px;
+  filter: invert();
+}
+
+body.dark-mode .top-bar-button img {
+  filter: none;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  gap: 24px;
+}
+
+.destination-input {
+  font: garamond, serif;
+}
+
+.settings-main,
+.hero {
+  min-height: calc(100vh - 80px);
+}
+
+.settings-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  font: garamond, serif;
+}
+
+.settings-page,
+.settings-page * {
+  font-family: Garamond, serif;
+}
+
+.settings-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: min(520px, 100%);
+  margin: 0 auto;
+  align-items: stretch;
+  padding: 36px 28px 28px;
+  font: garamond, serif;
+}
+
+.settings-main h1 {
+  margin-bottom: 0;
+  font: garamond, serif;
+
+}
+
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.secret-button {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  font: garamond, serif;
+}
+
+.confirm-button {
+  margin-top: 12px;
+  font: garamond, serif;
+
+}
+
+.settings-row label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  font: garamond, serif;
+
+}
+
+.settings-row select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background: #fafafa;
+  font-size: 1rem;
+}
+
+.secret-button:hover {
+  opacity: 0.95;
+}
+
+.hero-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: min(780px, 100%);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.hero-input {
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-style: italic;
+  color: #111;
+  background: #fafafa;
+}
+
+.hero-label {
+  width: 100%;
+  text-align: left;
+  font-family: Garamond, serif;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+.hero .calendar {
+  width: 100%;
+  max-width: 780px;
+}
+
+.hero .calendar-month {
+  background: #ffffff;
+  border: 1px solid #ddd;
+}
+
+.hero .calendar-weekdays div,
+.hero .calendar-cell {
+  font-size: 0.85rem;
+}
+
+.hero-input::placeholder {
+  color: #999;
+}
+
+.confirm-button {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 12px;
+  background: #c15f3c;
+  color: #fff;
+  font-size: 1.5rem;
+  font-family: garamond, serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm-button:hover {
+  opacity: 0.95;
 }
 
 nav {
@@ -22,11 +319,11 @@ nav a {
   align-items: flex-start;
 }
 
-.plan-layout > form {
+.plan-layout>form {
   flex-shrink: 0;
 }
 
-.plan-layout > #forecast-result {
+.plan-layout>#forecast-result {
   flex: 1;
   margin-top: 0;
   min-width: 0;
@@ -38,7 +335,7 @@ nav a {
     align-items: stretch;
   }
 
-  .plan-layout > #forecast-result {
+  .plan-layout>#forecast-result {
     margin-top: 24px;
   }
 }
@@ -107,8 +404,8 @@ nav a {
 }
 
 .date-button.selected {
-  border-color: #0066cc;
-  background: #0066cc;
+  border-color: #c15f3c;
+  background: #c15f3c;
   color: #fff;
 }
 
@@ -120,7 +417,7 @@ nav a {
 
 .selected-date-display {
   margin: 10px 0 0;
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   color: #444;
 }
 
@@ -171,8 +468,8 @@ nav a {
   border-radius: 7px;
   font-size: 0.9rem;
   cursor: pointer;
-  border: 1px solid #0066cc;
-  background: #0066cc;
+  border: 1px solid #c15f3c;
+  background: #c15f3c;
   color: #fff;
   display: inline-flex;
   align-items: center;
@@ -184,7 +481,7 @@ nav a {
 
 .import-label {
   background: #fff;
-  color: #0066cc;
+  color: #c15f3c;
   cursor: pointer;
 }
 
@@ -213,8 +510,8 @@ nav a {
 
 .export-plan-button {
   background: #fff;
-  color: #0066cc;
-  border: 1px solid #0066cc;
+  color: #c15f3c;
+  border: 1px solid #c15f3c;
   border-radius: 8px;
   padding: 10px 16px;
   cursor: pointer;
@@ -259,8 +556,8 @@ nav a {
 
 .filter-group input:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15);
+  border-color: #c15f3c;
+  box-shadow: 0 0 0 2px rgba(193, 95, 60, 0.15);
 }
 
 .clear-filters-button {
@@ -309,7 +606,7 @@ nav a {
 
 .delete-plan-button,
 #save-plan-button {
-  background: #0066cc;
+  background: #c15f3c;
   color: #ffffff;
   border: none;
   border-radius: 8px;
