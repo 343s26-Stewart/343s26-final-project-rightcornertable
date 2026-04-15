@@ -1,8 +1,13 @@
 const THEME_KEY = 'tripcast-theme';
+const UNIT_KEY = 'tripcast-units';
 const SECRET_BG_KEY = 'tripcast-secret-bg';
 
 function getSavedTheme() {
     return localStorage.getItem(THEME_KEY) || 'light';
+}
+
+function getSavedUnits() {
+    return localStorage.getItem(UNIT_KEY) || 'fahrenheit';
 }
 
 function getSavedSecretState() {
@@ -16,6 +21,10 @@ function applyTheme(theme) {
 function saveTheme(theme) {
     localStorage.setItem(THEME_KEY, theme);
     applyTheme(theme);
+}
+
+function saveUnits(units) {
+    localStorage.setItem(UNIT_KEY, units);
 }
 
 function isPortrait() {
@@ -42,6 +51,21 @@ function initTheme() {
         themeSelect.value = theme;
         themeSelect.addEventListener('change', (event) => {
             saveTheme(event.target.value);
+        });
+    }
+
+    const unitsSelect = document.getElementById('units-select');
+    if (unitsSelect) {
+        unitsSelect.value = getSavedUnits();
+        unitsSelect.addEventListener('change', (event) => {
+            saveUnits(event.target.value);
+        });
+    }
+
+    const settingsForm = document.querySelector('.settings-form');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', (event) => {
+            event.preventDefault();
         });
     }
 
