@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Plan a Trip - Tripcast</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+<body class="settings-page">
 
-<body>
+  <header class="top-bar">
+    <a href="saved.html" class="top-bar-button book-link" aria-label="Saved plans">
+      <img src="icons/book.png" alt="" />
+    </a>
+    <a href="index.html" class="top-bar-title">Tripcast</a>
+    <a href="settings.html" class="top-bar-button settings-link" aria-label="Settings">
+      <img src="icons/settings.png" alt="" />
+    </a>
+  </header>
 
-  <nav>
-    <a href="index.html"><strong>Tripcast</strong></a>
-    <a href="index.html">Home</a>
-    <a href="plan.html">Plan a Trip</a>
-    <a href="saved.html">Saved Plans</a>
-    <a href="about.html">About</a>
-  </nav>
-
-  <main>
-    <h1>Plan a Trip</h1>
-    <p>Use the home page to choose a destination, select a date, and see your forecast.</p>
+  <main class="settings-main">
+    <h1 class="hero-title">Trip Forecast</h1>
+    <section id="forecast-result" aria-live="polite">
+      <p class="empty-message">Confirm a destination on the homepage to view the forecast here.</p>
+    </section>
   </main>
+
+  <script type="module" src="js/weather-ui.js"></script>
   <script src="js/theme.js"></script>
 </body>
-
 </html>

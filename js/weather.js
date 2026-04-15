@@ -45,7 +45,8 @@ async function geocode(placeName) {
  * Fetches the daily forecast for a single date.
  * Returns an object with temperature, precipitation, and weather description.
  */
-async function fetchForecast(lat, lon, date) {
+async function fetchForecast(lat, lon, date, temperatureUnit = 'fahrenheit') {
+  const unitParam = temperatureUnit === 'celsius' ? 'celsius' : 'fahrenheit';
   const params = new URLSearchParams({
     latitude: lat,
     longitude: lon,
@@ -58,7 +59,8 @@ async function fetchForecast(lat, lon, date) {
       'cloudcover_mean',
       'sunrise', 'sunset',
     ].join(','),
-    temperature_unit: 'fahrenheit',
+    hourly: ['temperature_2m', 'weathercode'].join(','),
+    temperature_unit: unitParam,
     precipitation_unit: 'inch',
     windspeed_unit: 'mph',
     timezone: 'auto',
@@ -69,8 +71,7 @@ async function fetchForecast(lat, lon, date) {
   if (!res.ok) throw new Error(`Forecast request failed (${res.status})`);
   const data = await res.json();
 
-  // Open-Meteo returns arrays even for a single day; take index 0
-  const { daily } = data;
+  const { daily, hourly } = data;
   const code = daily.weathercode[0];
   return {
     date,
@@ -86,6 +87,11 @@ async function fetchForecast(lat, lon, date) {
     sunset: daily.sunset[0],
     weatherCode: code,
     description: WMO_LABELS[code] ?? 'Unknown conditions',
+    tempUnit: unitParam === 'celsius' ? '°C' : '°F',
+    hourly: {
+      times: hourly.time,
+      temperatures: hourly.temperature_2m,
+    },
   };
 }
 
@@ -93,8 +99,8 @@ async function fetchForecast(lat, lon, date) {
  * Main entry point called by the form submit handler.
  * Returns { location, forecast } or throws on error.
  */
-export async function getWeatherForTrip(placeName, date) {
+export async function getWeatherForTrip(placeName, date, temperatureUnit = 'fahrenheit') {
   const location = await geocode(placeName);
-  const forecast = await fetchForecast(location.lat, location.lon, date);
+  const forecast = await fetchForecast(location.lat, location.lon, date, temperatureUnit);
   return { location, forecast };
 }

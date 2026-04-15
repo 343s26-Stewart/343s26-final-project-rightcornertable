@@ -6,19 +6,22 @@
   <title>Saved Plans - Tripcast</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
+<body class="settings-page">
 
-  <nav>
-    <a href="index.html"><strong>Tripcast</strong></a>
-    <a href="index.html">Home</a>
-    <a href="plan.html">Plan a Trip</a>
-    <a href="saved.html">Saved Plans</a>
-    <a href="about.html">About</a>
-  </nav>
+  <header class="top-bar">
+    <a href="saved.html" class="top-bar-button book-link" aria-label="Saved plans">
+      <img src="icons/book.png" alt="" />
+    </a>
+    <a href="index.html" class="top-bar-title">Tripcast</a>
+    <a href="settings.html" class="top-bar-button settings-link" aria-label="Settings">
+      <img src="icons/settings.png" alt="" />
+    </a>
+  </header>
 
-  <main>
-    <h1>Saved Plans</h1>
+  <main class="settings-main">
+    <h1 class="hero-title">Saved Plans</h1>
     <p>Your saved trip forecasts will appear here.</p>
+    <div id="saved-plans" class="saved-plans-container"></div>
   </main>
 
   <script src="js/theme.js"></script>
