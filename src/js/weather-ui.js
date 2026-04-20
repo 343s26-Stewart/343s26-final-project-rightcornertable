@@ -5,6 +5,7 @@
 
 import { getWeatherForTrip } from './weather.js';
 import { savePlan } from './storage.js';
+import { openDirections } from './directions.js';
 
 const form = document.getElementById('trip-form');
 const resultSection = document.getElementById('forecast-result');
@@ -149,7 +150,10 @@ function renderForecast(location, forecast) {
           <tr><th scope="row">Sunset</th><td>${fmtTime(forecast.sunset)}</td></tr>
         </tbody>
       </table>
-      <button id="save-plan-button" type="button">Save this plan</button>
+      <div class="plan-page-actions">
+        <button id="save-plan-button" type="button">Save this plan</button>
+        <button id="directions-button" type="button">Get Directions</button>
+      </div>
       <p id="save-notice" class="save-notice" aria-live="polite"></p>
       <p class="api-credit">Weather data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required).</p>
     </div>
@@ -158,6 +162,11 @@ function renderForecast(location, forecast) {
   drawHourlyChart(forecast.hourly, forecast.tempUnit, forecast.date);
 
   document.getElementById('save-plan-button').addEventListener('click', handleSaveClick);
+
+  const directionsBtn = document.getElementById('directions-button');
+  directionsBtn.addEventListener('click', () => {
+    openDirections(location.lat, location.lon, directionsBtn);
+  });
 }
 
 function drawHourlyChart(hourly, tempUnit, date) {

@@ -3,6 +3,7 @@
  * Renders saved Tripcast plans from localStorage.
  */
 import { getSavedPlans, deletePlan, savePlan } from './storage.js';
+import { openDirections } from './directions.js';
 
 const main = document.querySelector('main');
 
@@ -160,6 +161,7 @@ function renderCards() {
           </p>
         </div>
         <div class="plan-actions">
+          <button class="directions-plan-button" type="button" data-lat="${plan.location.lat}" data-lon="${plan.location.lon}">Directions</button>
           <button class="export-plan-button" type="button" data-id="${plan.id}">Export</button>
           <button class="delete-plan-button" type="button" data-id="${plan.id}">Delete</button>
         </div>
@@ -346,6 +348,12 @@ main.addEventListener('click', (event) => {
   const exportBtn = event.target.closest('.export-plan-button');
   if (exportBtn) {
     exportPlan(exportBtn.dataset.id);
+    return;
+  }
+
+  const directionsBtn = event.target.closest('.directions-plan-button');
+  if (directionsBtn) {
+    openDirections(parseFloat(directionsBtn.dataset.lat), parseFloat(directionsBtn.dataset.lon), directionsBtn);
   }
 });
 
