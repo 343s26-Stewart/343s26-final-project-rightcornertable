@@ -569,7 +569,8 @@ nav a {
   flex-shrink: 0;
 }
 
-.export-plan-button {
+.export-plan-button,
+.directions-plan-button {
   background: #fff;
   color: #c15f3c;
   border: 1px solid #c15f3c;
@@ -579,8 +580,47 @@ nav a {
   font-size: 1rem;
 }
 
-.export-plan-button:hover {
+.export-plan-button:hover,
+.directions-plan-button:hover {
   background: #eaf3ff;
+}
+
+.directions-plan-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.plan-page-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.plan-page-actions #save-plan-button,
+.plan-page-actions #directions-button {
+  margin-top: 0;
+}
+
+#directions-button {
+  background: #fff;
+  color: #c15f3c;
+  border: 1px solid #c15f3c;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: Garamond, serif;
+}
+
+#directions-button:hover {
+  background: #eaf3ff;
+}
+
+#directions-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .filter-bar {
