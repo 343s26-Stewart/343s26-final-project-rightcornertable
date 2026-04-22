@@ -175,8 +175,14 @@ function drawHourlyChart(hourly, tempUnit, date) {
   if (!chart || !tooltip || !hourly || !hourly.times) return;
 
   const ctx = chart.getContext('2d');
-  const width = chart.width;
-  const height = chart.height;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = chart.getBoundingClientRect();
+  chart.width = rect.width * dpr;
+  chart.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const width = rect.width;
+  const height = rect.height;
+
   ctx.clearRect(0, 0, width, height);
 
   const filteredTimes = hourly.times.map((time, index) => ({ time, temp: hourly.temperatures[index] }))
