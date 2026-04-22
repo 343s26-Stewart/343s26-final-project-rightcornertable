@@ -462,7 +462,8 @@ nav a {
   font-family: Garamond, serif;
 }
 
-#hourly-chart {
+#hourly-chart,
+.saved-hourly-chart {
   width: 100%;
   height: auto;
   display: block;
