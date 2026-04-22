@@ -42,6 +42,54 @@
                 </select>
             </div>
 
+            <hr class="settings-divider" />
+            <h2 class="settings-section-title">Activity Recommendations</h2>
+
+            <div class="settings-row">
+                <label for="activity-min-temp">Min. Temperature</label>
+                <div class="settings-input-with-unit">
+                    <input type="number" id="activity-min-temp" step="1" />
+                    <span id="activity-temp-unit">°F</span>
+                </div>
+            </div>
+
+            <div class="settings-row">
+                <label for="activity-max-precip">Max. Precipitation</label>
+                <div class="settings-input-with-unit">
+                    <input type="number" id="activity-max-precip" step="0.01" min="0" />
+                    <span>in</span>
+                </div>
+            </div>
+
+            <div class="settings-row">
+                <label for="activity-max-wind">Max. Wind Speed</label>
+                <div class="settings-input-with-unit">
+                    <input type="number" id="activity-max-wind" step="1" min="0" />
+                    <span>mph</span>
+                </div>
+            </div>
+
+            <div class="settings-row">
+                <label for="activity-radius">Search Radius</label>
+                <select id="activity-radius">
+                    <option value="500">500 m</option>
+                    <option value="1000">1 km</option>
+                    <option value="2000">2 km</option>
+                    <option value="5000">5 km</option>
+                </select>
+            </div>
+
+            <fieldset class="settings-row settings-fieldset">
+                <legend class="settings-fieldset-legend">Categories</legend>
+                <div class="settings-checkboxes">
+                    <label class="settings-checkbox-label"><input type="checkbox" name="activity-cat" value="food" /> Food &amp; Drink</label>
+                    <label class="settings-checkbox-label"><input type="checkbox" name="activity-cat" value="nature" /> Parks &amp; Nature</label>
+                    <label class="settings-checkbox-label"><input type="checkbox" name="activity-cat" value="culture" /> Culture &amp; Attractions</label>
+                    <label class="settings-checkbox-label"><input type="checkbox" name="activity-cat" value="entertainment" /> Entertainment</label>
+                    <label class="settings-checkbox-label"><input type="checkbox" name="activity-cat" value="fitness" /> Fitness &amp; Sports</label>
+                </div>
+            </fieldset>
+
             <!-- <button type="submit" class="confirm-button">Confirm</button> -->
             <p></p>
             <p></p>
@@ -64,6 +112,7 @@
     </main>
 
     <script src="js/theme.js"></script>
+    <script type="module" src="js/activity-settings.js"></script>
 </body>
 
 </html>

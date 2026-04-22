@@ -4,6 +4,7 @@
  */
 import { getSavedPlans, deletePlan, savePlan } from './storage.js';
 import { openDirections } from './directions.js';
+import { renderActivitiesPanel } from './activities.js';
 
 const main = document.querySelector('main');
 
@@ -149,7 +150,7 @@ function renderCards() {
 
   const drawQueue = [];
 
-  plans.forEach((plan) => {
+  plans.forEach((plan, index) => {
     const card = document.createElement('article');
     card.className = 'plan-card';
 
@@ -171,25 +172,42 @@ function renderCards() {
       <div class="plan-details">
         <div class="hourly-chart-card saved-chart-card">
           <h3>24 Hour Temperature</h3>
+          <div class="chart-tooltip" aria-hidden="true"></div>
           <canvas class="saved-hourly-chart" width="760" height="320"></canvas>
         </div>
-        <table class="forecast-table">
-          <tbody>
-            <tr><th scope="row">Conditions</th><td>${plan.forecast.description}</td></tr>
-            <tr><th scope="row">High / Low</th><td>${plan.forecast.tempMax}${plan.forecast.tempUnit} / ${plan.forecast.tempMin}${plan.forecast.tempUnit}</td></tr>
-            <tr><th scope="row">Precipitation</th><td>${plan.forecast.precip} in</td></tr>
-            <tr><th scope="row">Rain</th><td>${plan.forecast.rain} in</td></tr>
-            <tr><th scope="row">Snowfall</th><td>${plan.forecast.snowfall} in</td></tr>
-            <tr><th scope="row">Wind Speed</th><td>${plan.forecast.windspeed} mph</td></tr>
-            <tr><th scope="row">UV Index</th><td>${plan.forecast.uvIndex}</td></tr>
-            <tr><th scope="row">Sunrise</th><td>${formatTime(plan.forecast.sunrise)}</td></tr>
-            <tr><th scope="row">Sunset</th><td>${formatTime(plan.forecast.sunset)}</td></tr>
-          </tbody>
-        </table>
+        <div class="plan-conditions-row">
+          <div class="forecast-conditions-col">
+            <table class="forecast-table">
+              <tbody>
+                <tr><th scope="row">Conditions</th><td>${plan.forecast.description}</td></tr>
+                <tr><th scope="row">High / Low</th><td>${plan.forecast.tempMax}${plan.forecast.tempUnit} / ${plan.forecast.tempMin}${plan.forecast.tempUnit}</td></tr>
+                <tr><th scope="row">Precipitation</th><td>${plan.forecast.precip} in</td></tr>
+                <tr><th scope="row">Rain</th><td>${plan.forecast.rain} in</td></tr>
+                <tr><th scope="row">Snowfall</th><td>${plan.forecast.snowfall} in</td></tr>
+                <tr><th scope="row">Wind Speed (max)</th><td>${plan.forecast.windspeed} mph</td></tr>
+                <tr><th scope="row">UV Index (max)</th><td>${plan.forecast.uvIndex}</td></tr>
+                ${plan.forecast.cloudcover !== null ? `<tr><th scope="row">Cloud Cover</th><td>${plan.forecast.cloudcover}%</td></tr>` : ''}
+                <tr><th scope="row">Sunrise</th><td>${formatTime(plan.forecast.sunrise)}</td></tr>
+                <tr><th scope="row">Sunset</th><td>${formatTime(plan.forecast.sunset)}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="activities-col">
+            <h3 class="activities-heading">Nearby Activities</h3>
+            <div class="activities-panel"></div>
+          </div>
+        </div>
       </div>
     `;
 
     listContainer.appendChild(card);
+
+    const activitiesPanel = card.querySelector('.activities-panel');
+    if (activitiesPanel) {
+      setTimeout(() => {
+        renderActivitiesPanel(activitiesPanel, plan.location.lat, plan.location.lon, plan.forecast);
+      }, index * 300);
+    }
 
     const chartCanvas = card.querySelector('.saved-hourly-chart');
     if (chartCanvas && plan.forecast.hourly?.times?.length && plan.forecast.hourly?.temperatures?.length) {
@@ -361,6 +379,37 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
   ctx.fillStyle = textColor;
   ctx.textAlign = 'left';
   ctx.fillText(`Temp (${tempUnit})`, xPadding, yPadding - 10);
+
+  const tooltip = canvas.parentElement.querySelector('.chart-tooltip');
+  if (!tooltip) return;
+
+  canvas.onmousemove = (event) => {
+    const canvasRect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+    const hitDistance = 8;
+    const hit = positions.find((point) => {
+      const dx = point.x - mouseX;
+      const dy = point.y - mouseY;
+      return Math.sqrt(dx * dx + dy * dy) <= hitDistance;
+    });
+
+    if (hit) {
+      tooltip.textContent = `${hit.label}: ${hit.temp}°`;
+      tooltip.style.opacity = '1';
+      tooltip.style.left = `${hit.x}px`;
+      tooltip.style.top = `${hit.y + 12}px`;
+      tooltip.setAttribute('aria-hidden', 'false');
+    } else {
+      tooltip.style.opacity = '0';
+      tooltip.setAttribute('aria-hidden', 'true');
+    }
+  };
+
+  canvas.onmouseleave = () => {
+    tooltip.style.opacity = '0';
+    tooltip.setAttribute('aria-hidden', 'true');
+  };
 }
 
 // --- Events ---
