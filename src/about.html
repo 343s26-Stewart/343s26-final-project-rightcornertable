@@ -1,40 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About - Tripcast</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
 
-  <nav>
-    <a href="index.html"><strong>Tripcast</strong></a>
-    <a href="index.html">Home</a>
-    <a href="plan.html">Plan a Trip</a>
-    <a href="saved.html">Saved Plans</a>
-    <a href="about.html">About</a>
-  </nav>
+<body class="settings-page">
 
-  <main>
-    <h1>About Tripcast</h1>
-    <p>Tripcast is a weather-aware activity planner built as a CS 343 final project by Right Corner Table.</p>
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <a href="saved.html" class="top-bar-button book-link" aria-label="Saved plans">
+        <img src="icons/book.png" alt="" />
+      </a>
+      <a href="about.html" class="top-bar-button help-link" aria-label="About">?</a>
+    </div>
+    <a href="index.html" class="top-bar-title">Tripcast</a>
+    <a href="settings.html" class="top-bar-button settings-link" aria-label="Settings">
+      <img src="icons/settings.png" alt="" />
+    </a>
+  </header>
 
-    <h2>The Team</h2>
-    <ul>
-      <li>Aidan B.</li>
-      <li>Alex H.</li>
-      <li>Frank H.</li>
-      <li>Tate M.</li>
-    </ul>
+  <main class="settings-main about-main">
+    <h1 class="hero-title">About Tripcast</h1>
+    <p class="about-intro">
+      A weather-aware activity planner built as a CS 343 final project by Right Corner Table.
+    </p>
 
-    <h2>Technology</h2>
-    <ul>
-      <li>Plain HTML, CSS, and JavaScript</li>
-      <li>Weather data from <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required)</li>
-      <li>Data stored locally using localStorage</li>
-    </ul>
+    <section class="about-card">
+      <h2>The Team</h2>
+      <ul class="team-grid">
+        <li>Aidan B.</li>
+        <li>Alex H.</li>
+        <li>Frank H.</li>
+        <li>Tate M.</li>
+      </ul>
+    </section>
+
+    <section class="about-card">
+      <h2>Technology</h2>
+      <ul class="tech-list">
+        <li>Plain HTML, CSS, and JavaScript</li>
+        <li>Weather data from <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required)</li>
+        <li>Data stored locally using <code>localStorage</code></li>
+      </ul>
+    </section>
   </main>
+
   <script src="js/theme.js"></script>
 </body>
+
 </html>
