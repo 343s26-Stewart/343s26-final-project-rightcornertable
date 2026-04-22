@@ -200,8 +200,16 @@ function renderCards() {
   main.appendChild(listContainer);
 
   drawQueue.forEach(({ canvas, hourly, tempUnit, date }) => {
-    drawSavedChart(canvas, hourly, tempUnit, date);
+  const observer = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.contentRect.width > 0) {
+        observer.disconnect();
+        drawSavedChart(canvas, hourly, tempUnit, date);
+      }
+    }
   });
+  observer.observe(canvas);
+});
 }
 
 function renderSavedPlans() {
@@ -298,10 +306,16 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
     label: labels[index],
   }));
 
-  ctx.fillStyle = '#f8fafc';
+  const isDark = document.body.classList.contains('dark-mode');
+  const bgColor = isDark ? '#2a2a2a' : '#f8fafc';
+  const gridColor = isDark ? '#555555' : '#d1d5db';
+  const labelColor = isDark ? '#cccccc' : '#4b5563';
+  const textColor = isDark ? '#ffffff' : '#111827';
+
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.strokeStyle = '#d1d5db';
+  ctx.strokeStyle = gridColor;
   ctx.lineWidth = 1;
   ctx.beginPath();
   for (let i = 0; i <= 4; i += 1) {
@@ -311,7 +325,7 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
   }
   ctx.stroke();
 
-  ctx.fillStyle = '#4b5563';
+  ctx.fillStyle = labelColor;
   ctx.font = '11px Garamond, serif';
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i += 1) {
@@ -329,7 +343,7 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
   });
   ctx.stroke();
 
-  ctx.fillStyle = '#1f2937';
+  ctx.fillStyle = textColor;
   ctx.font = '11px Garamond, serif';
   ctx.textAlign = 'center';
   positions.forEach((point, index) => {
@@ -344,7 +358,7 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
     ctx.fill();
   });
 
-  ctx.fillStyle = '#111827';
+  ctx.fillStyle = textColor;
   ctx.textAlign = 'left';
   ctx.fillText(`Temp (${tempUnit})`, xPadding, yPadding - 10);
 }

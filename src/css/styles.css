@@ -26,8 +26,7 @@ body.dark-mode .calendar-cell {
   color: #ffffff;
 }
 
-body.dark-mode .settings-form {
-}
+body.dark-mode .settings-form {}
 
 body.dark-mode select,
 body.dark-mode .hero-input {
@@ -36,7 +35,7 @@ body.dark-mode .hero-input {
   border-color: #666;
 }
 
-body.dark-mode .api-credit{
+body.dark-mode .api-credit {
   color: #fff;
 }
 
@@ -81,6 +80,36 @@ body.secret-bg.secret-landscape {
 
 body.secret-bg.secret-portrait {
   background-image: url("../imgs/dr-stew-portrait.jpeg");
+}
+
+
+body.dark-mode .filter-bar {
+  background: #3a3a3a;
+  border-color: #555;
+}
+
+body.dark-mode .filter-group label {
+  color: #cccccc;
+}
+
+body.dark-mode .filter-group input {
+  background: #4c4c4c;
+  color: #fff;
+  border-color: #666;
+}
+
+body.dark-mode .filter-group input::placeholder {
+  color: #999;
+}
+
+body.dark-mode .clear-filters-button {
+  background: none;
+  border-color: #777;
+  color: #ccc;
+}
+
+body.dark-mode .clear-filters-button:hover {
+  background: #4c4c4c;
 }
 
 .homepage {
@@ -429,8 +458,6 @@ body.dark-mode .date-button:disabled {
   cursor: not-allowed;
 }
 
-
-
 .selected-date-display {
   margin: 10px 0 0;
   font-size: 1.25rem;
@@ -485,6 +512,35 @@ body.dark-mode .date-button:disabled {
   display: block;
   border-radius: 12px;
   background: #f8fafc;
+}
+
+body.dark-mode .hourly-chart-card {
+  background: #3a3a3a;
+  border-color: #555;
+}
+
+body.dark-mode .plan-card {
+  background: #3a3a3a;
+  border-color: #555;
+}
+
+body.dark-mode .forecast-table th,
+body.dark-mode .forecast-table td {
+  color: #ffffff;
+  border-bottom-color: #555;
+}
+
+body.dark-mode .forecast-table th[scope="row"] {
+  color: #cccccc;
+}
+
+body.dark-mode .plan-meta {
+  color: #cccccc;
+}
+
+body.dark-mode #hourly-chart,
+body.dark-mode .saved-hourly-chart {
+  background: #3a3a3a;
 }
 
 .hourly-chart-card {
@@ -772,4 +828,5 @@ body.dark-mode .date-button:disabled {
   .calendar-grid {
     gap: 2px;
   }
+
 }
