@@ -27,6 +27,9 @@ body.dark-mode .calendar-cell {
 }
 
 body.dark-mode .settings-form {}
+body.dark-mode .saved-plans-container .empty-message {
+  color: #ffffff;
+}
 
 body.dark-mode select,
 body.dark-mode .hero-input {
@@ -405,6 +408,7 @@ nav a {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
+  margin-top: 10px;
 }
 
 body.dark-mode .calendar-cell {
