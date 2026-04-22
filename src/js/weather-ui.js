@@ -6,6 +6,7 @@
 import { getWeatherForTrip } from './weather.js';
 import { savePlan } from './storage.js';
 import { openDirections } from './directions.js';
+import { renderActivitiesPanel } from './activities.js';
 
 const form = document.getElementById('trip-form');
 const resultSection = document.getElementById('forecast-result');
@@ -136,26 +137,32 @@ function renderForecast(location, forecast) {
       <canvas id="hourly-chart" width="760" height="320"></canvas>
     </div>
     <div class="forecast-details">
-      <table class="forecast-table">
-        <tbody>
-          <tr><th scope="row">Conditions</th><td>${forecast.description}</td></tr>
-          <tr><th scope="row">High / Low</th><td>${forecast.tempMax}${forecast.tempUnit} / ${forecast.tempMin}${forecast.tempUnit}</td></tr>
-          <tr><th scope="row">Precipitation</th><td>${forecast.precip} in</td></tr>
-          <tr><th scope="row">Rain</th><td>${forecast.rain} in</td></tr>
-          <tr><th scope="row">Snowfall</th><td>${forecast.snowfall} in</td></tr>
-          <tr><th scope="row">Wind Speed (max)</th><td>${forecast.windspeed} mph</td></tr>
-          <tr><th scope="row">UV Index (max)</th><td>${forecast.uvIndex}</td></tr>
-          ${cloudRow}
-          <tr><th scope="row">Sunrise</th><td>${fmtTime(forecast.sunrise)}</td></tr>
-          <tr><th scope="row">Sunset</th><td>${fmtTime(forecast.sunset)}</td></tr>
-        </tbody>
-      </table>
-      <div class="plan-page-actions">
-        <button id="save-plan-button" type="button">Save this plan</button>
-        <button id="directions-button" type="button">Get Directions</button>
+      <div class="forecast-conditions-col">
+        <table class="forecast-table">
+          <tbody>
+            <tr><th scope="row">Conditions</th><td>${forecast.description}</td></tr>
+            <tr><th scope="row">High / Low</th><td>${forecast.tempMax}${forecast.tempUnit} / ${forecast.tempMin}${forecast.tempUnit}</td></tr>
+            <tr><th scope="row">Precipitation</th><td>${forecast.precip} in</td></tr>
+            <tr><th scope="row">Rain</th><td>${forecast.rain} in</td></tr>
+            <tr><th scope="row">Snowfall</th><td>${forecast.snowfall} in</td></tr>
+            <tr><th scope="row">Wind Speed (max)</th><td>${forecast.windspeed} mph</td></tr>
+            <tr><th scope="row">UV Index (max)</th><td>${forecast.uvIndex}</td></tr>
+            ${cloudRow}
+            <tr><th scope="row">Sunrise</th><td>${fmtTime(forecast.sunrise)}</td></tr>
+            <tr><th scope="row">Sunset</th><td>${fmtTime(forecast.sunset)}</td></tr>
+          </tbody>
+        </table>
+        <div class="plan-page-actions">
+          <button id="save-plan-button" type="button">Save this plan</button>
+          <button id="directions-button" type="button">Get Directions</button>
+        </div>
+        <p id="save-notice" class="save-notice" aria-live="polite"></p>
+        <p class="api-credit">Weather data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required).</p>
       </div>
-      <p id="save-notice" class="save-notice" aria-live="polite"></p>
-      <p class="api-credit">Weather data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key required).</p>
+      <div class="activities-col">
+        <h3 class="activities-heading">Nearby Activities</h3>
+        <div id="activities-panel" class="activities-panel"></div>
+      </div>
     </div>
   `;
 
@@ -167,6 +174,8 @@ function renderForecast(location, forecast) {
   directionsBtn.addEventListener('click', () => {
     openDirections(location.lat, location.lon, directionsBtn);
   });
+
+  renderActivitiesPanel(document.getElementById('activities-panel'), location.lat, location.lon, forecast);
 }
 
 function drawHourlyChart(hourly, tempUnit, date) {
@@ -279,8 +288,8 @@ function drawHourlyChart(hourly, tempUnit, date) {
     if (hit) {
       tooltip.textContent = `${hit.label}: ${hit.temp}°`;
       tooltip.style.opacity = '1';
-      tooltip.style.left = `${Math.min(rect.width - 100, hit.x + 10)}px`;
-      tooltip.style.top = `${Math.max(10, hit.y - 30)}px`;
+      tooltip.style.left = `${hit.x}px`;
+      tooltip.style.top = `${hit.y + 12}px`;
       tooltip.setAttribute('aria-hidden', 'false');
     } else {
       tooltip.style.opacity = '0';
