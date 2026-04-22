@@ -26,7 +26,8 @@ body.dark-mode .calendar-cell {
   color: #ffffff;
 }
 
-body.dark-mode .settings-form {
+body.dark-mode .saved-plans-container .empty-message {
+  color: #ffffff;
 }
 
 body.dark-mode select,
