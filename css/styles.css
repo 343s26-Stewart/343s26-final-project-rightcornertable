@@ -478,7 +478,8 @@ body.dark-mode .date-button:disabled {
   font-family: Garamond, serif;
 }
 
-#hourly-chart {
+#hourly-chart,
+.saved-hourly-chart {
   width: 100%;
   height: auto;
   display: block;
