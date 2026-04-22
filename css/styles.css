@@ -36,6 +36,10 @@ body.dark-mode .hero-input {
   border-color: #666;
 }
 
+body.dark-mode .api-credit{
+  color: #fff;
+}
+
 body.dark-mode .calendar-month {
   background: #414141;
   border-color: #555;
@@ -374,6 +378,11 @@ nav a {
   gap: 4px;
 }
 
+body.dark-mode .calendar-cell {
+  background: #4c4c4c;
+  color: #fff;
+}
+
 .calendar-weekdays div,
 .calendar-cell {
   text-align: center;
@@ -409,11 +418,18 @@ nav a {
   color: #fff;
 }
 
+body.dark-mode .date-button:disabled {
+  background: #3a3a3a;
+  color: #666;
+}
+
 .date-button:disabled {
   background: #f1f1f1;
   color: #999;
   cursor: not-allowed;
 }
+
+
 
 .selected-date-display {
   margin: 10px 0 0;
