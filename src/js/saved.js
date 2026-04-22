@@ -147,6 +147,8 @@ function renderCards() {
     return;
   }
 
+  const drawQueue = [];
+
   plans.forEach((plan) => {
     const card = document.createElement('article');
     card.className = 'plan-card';
@@ -169,7 +171,7 @@ function renderCards() {
       <div class="plan-details">
         <div class="hourly-chart-card saved-chart-card">
           <h3>24 Hour Temperature</h3>
-          <canvas class="saved-hourly-chart" width="760" height="260"></canvas>
+          <canvas class="saved-hourly-chart" width="760" height="320"></canvas>
         </div>
         <table class="forecast-table">
           <tbody>
@@ -191,11 +193,15 @@ function renderCards() {
 
     const chartCanvas = card.querySelector('.saved-hourly-chart');
     if (chartCanvas && plan.forecast.hourly?.times?.length && plan.forecast.hourly?.temperatures?.length) {
-      drawSavedChart(chartCanvas, plan.forecast.hourly, plan.forecast.tempUnit, plan.forecast.date);
+      drawQueue.push({ canvas: chartCanvas, hourly: plan.forecast.hourly, tempUnit: plan.forecast.tempUnit, date: plan.forecast.date });
     }
   });
 
   main.appendChild(listContainer);
+
+  drawQueue.forEach(({ canvas, hourly, tempUnit, date }) => {
+    drawSavedChart(canvas, hourly, tempUnit, date);
+  });
 }
 
 function renderSavedPlans() {
@@ -262,8 +268,14 @@ function formatTime(isoString) {
 
 function drawSavedChart(canvas, hourly, tempUnit, date) {
   const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const width = rect.width;
+  const height = rect.height;
+
   ctx.clearRect(0, 0, width, height);
 
   const filtered = hourly.times.map((time, index) => ({ time, temp: hourly.temperatures[index] }))
@@ -274,13 +286,14 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
   const values = filtered.map((entry) => entry.temp);
   const maxTemp = Math.max(...values);
   const minTemp = Math.min(...values);
-  const padding = 42;
-  const chartWidth = width - padding * 2;
-  const chartHeight = height - padding * 2;
+  const yPadding = 40;
+  const xPadding = 50;
+  const chartWidth = width - xPadding * 2;
+  const chartHeight = height - yPadding * 2;
 
   const positions = values.map((temp, index) => ({
-    x: padding + (chartWidth * index) / (values.length - 1),
-    y: padding + chartHeight * (1 - (temp - minTemp) / (maxTemp - minTemp || 1)),
+    x: xPadding + (chartWidth * index) / (values.length - 1),
+    y: yPadding + chartHeight * (1 - (temp - minTemp) / (maxTemp - minTemp || 1)),
     temp,
     label: labels[index],
   }));
@@ -292,29 +305,37 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
   ctx.lineWidth = 1;
   ctx.beginPath();
   for (let i = 0; i <= 4; i += 1) {
-    const y = padding + (chartHeight * i) / 4;
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
+    const y = yPadding + (chartHeight * i) / 4;
+    ctx.moveTo(xPadding, y);
+    ctx.lineTo(width - xPadding, y);
   }
   ctx.stroke();
 
   ctx.fillStyle = '#4b5563';
-  ctx.font = '10px Garamond, serif';
+  ctx.font = '11px Garamond, serif';
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i += 1) {
     const tempValue = Math.round(maxTemp - ((maxTemp - minTemp) / 4) * i);
-    const y = padding + (chartHeight * i) / 4 + 4;
-    ctx.fillText(`${tempValue}°`, padding - 8, y);
+    const y = yPadding + (chartHeight * i) / 4 + 4;
+    ctx.fillText(`${tempValue}°`, xPadding - 10, y);
   }
 
   ctx.strokeStyle = '#c15f3c';
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 3;
   ctx.beginPath();
   positions.forEach((point, index) => {
     if (index === 0) ctx.moveTo(point.x, point.y);
     else ctx.lineTo(point.x, point.y);
   });
   ctx.stroke();
+
+  ctx.fillStyle = '#1f2937';
+  ctx.font = '11px Garamond, serif';
+  ctx.textAlign = 'center';
+  positions.forEach((point, index) => {
+    if (index % Math.ceil(positions.length / 8) !== 0 && index !== positions.length - 1) return;
+    ctx.fillText(point.label, point.x, height - 12);
+  });
 
   ctx.fillStyle = '#c15f3c';
   positions.forEach((point) => {
@@ -324,15 +345,8 @@ function drawSavedChart(canvas, hourly, tempUnit, date) {
   });
 
   ctx.fillStyle = '#111827';
-  ctx.font = '10px Garamond, serif';
-  ctx.textAlign = 'center';
-  positions.forEach((point, index) => {
-    if (index % Math.ceil(positions.length / 6) !== 0 && index !== positions.length - 1) return;
-    ctx.fillText(point.label, point.x, height - 10);
-  });
-
   ctx.textAlign = 'left';
-  ctx.fillText(`Temp (${tempUnit})`, padding, padding - 12);
+  ctx.fillText(`Temp (${tempUnit})`, xPadding, yPadding - 10);
 }
 
 // --- Events ---
