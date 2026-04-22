@@ -174,6 +174,12 @@ function drawHourlyChart(hourly, tempUnit, date) {
   const tooltip = document.getElementById('hourly-chart-tooltip');
   if (!chart || !tooltip || !hourly || !hourly.times) return;
 
+  const isDark = document.body.classList.contains('dark-mode');
+  const bgColor = isDark ? '#3a3a3a' : '#f8fafc';
+  const gridColor = isDark ? '#555' : '#d1d5db';
+  const labelColor = isDark ? '#cccccc' : '#4b5563';
+  const textColor = isDark ? '#ffffff' : '#111827';
+
   const ctx = chart.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const rect = chart.getBoundingClientRect();
@@ -209,10 +215,10 @@ function drawHourlyChart(hourly, tempUnit, date) {
     label: labels[index],
   }));
 
-  ctx.fillStyle = '#f8fafc';
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, width, height);
 
-  ctx.strokeStyle = '#d1d5db';
+  ctx.strokeStyle = gridColor;
   ctx.lineWidth = 1;
   ctx.beginPath();
   for (let i = 0; i <= 4; i += 1) {
@@ -222,7 +228,7 @@ function drawHourlyChart(hourly, tempUnit, date) {
   }
   ctx.stroke();
 
-  ctx.fillStyle = '#4b5563';
+  ctx.fillStyle = labelColor;
   ctx.font = '11px Garamond, serif';
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i += 1) {
@@ -240,7 +246,7 @@ function drawHourlyChart(hourly, tempUnit, date) {
   });
   ctx.stroke();
 
-  ctx.fillStyle = '#1f2937';
+  ctx.fillStyle = textColor;
   ctx.font = '11px Garamond, serif';
   ctx.textAlign = 'center';
   pointPositions.forEach((point, index) => {
@@ -257,7 +263,7 @@ function drawHourlyChart(hourly, tempUnit, date) {
 
   ctx.fillStyle = '#111827';
   ctx.textAlign = 'left';
-  ctx.fillText(`Temp (${tempUnit})`, xPadding, yPadding - 10);
+  // ctx.fillText(`Temp (${tempUnit})`, xPadding, yPadding - 10);
 
   chart.onmousemove = (event) => {
     const rect = chart.getBoundingClientRect();
