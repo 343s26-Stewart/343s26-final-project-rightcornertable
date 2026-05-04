@@ -152,7 +152,9 @@ body.dark-mode .clear-filters-button:hover {
   font-size: 2.75rem;
   font-weight: 700;
   font: garamond, serif;
-
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* fixed centering of "Tripcast" in top nav */
 }
 
 .top-bar-button {
@@ -1108,6 +1110,19 @@ body.dark-mode .about-card {
   padding: 10px 14px;
   font-weight: 600;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-grid img {
+  width: 150px;
+  height: auto;
+  border-radius: 8px;
+  height: 150px; /* had to shorten obama */
+  object-fit: cover;
+  object-position: top;
 }
 
 body.dark-mode .team-grid li {
