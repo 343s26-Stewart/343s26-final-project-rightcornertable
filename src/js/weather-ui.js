@@ -80,7 +80,8 @@ if (form) {
       renderForecast(location, forecast);
     } catch (err) {
       if (resultSection) {
-        resultSection.innerHTML = `<p class="error">${err.message}</p>`;
+        resultSection.innerHTML = '<p>Error fetching forecast. Check your connection and try again.</p>';
+        resultSection.innerHTML += `<p class="error">${err.message}</p>`;
       }
     }
   });
@@ -111,7 +112,8 @@ async function initFromRedirect() {
     renderForecast(location, forecast);
   } catch (err) {
     if (resultSection) {
-      resultSection.innerHTML = `<p class="error">${err.message}</p>`;
+      resultSection.innerHTML = '<p>Error fetching forecast. Check your connection and try again.</p>';
+      resultSection.innerHTML += `<p class="error">${err.message}</p>`;
     }
   }
 }

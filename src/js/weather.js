@@ -36,6 +36,7 @@ async function geocode(placeName) {
   if (!data.results || data.results.length === 0) {
     throw new Error(`Could not find a location named "${placeName}". Try a city and country (e.g. "Paris, France").`);
   }
+  
   const { latitude, longitude, name, admin1, country } = data.results[0];
   const displayName = [name, admin1, country].filter(Boolean).join(', ');
   return { lat: latitude, lon: longitude, displayName };
