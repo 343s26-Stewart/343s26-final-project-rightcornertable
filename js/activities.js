@@ -2,16 +2,17 @@ const ACTIVITY_KEY = 'tripcast-activity-settings';
 const UNIT_KEY = 'tripcast-units';
 
 const CATEGORY_TAGS = {
-  food:          [['amenity', 'restaurant|cafe|bar|pub|fast_food|ice_cream|bakery']],
+  food:          [['amenity', 'cafe|ice_cream|bakery']],
   nature:        [['leisure', 'park|garden|nature_reserve'], ['tourism', 'viewpoint|zoo|aquarium']],
   culture:       [['amenity', 'museum|library|arts_centre'], ['tourism', 'attraction|museum|gallery']],
   entertainment: [['amenity', 'cinema|theatre|nightclub|bowling_alley']],
-  fitness:       [['leisure', 'sports_centre|fitness_centre|swimming_pool']],
+  fitness:       [['leisure', 'sports_centre|swimming_pool']],
 };
 
-const OUTDOOR_TYPES = new Set([
-  'park', 'garden', 'nature_reserve', 'viewpoint', 'zoo', 'aquarium', 'theme_park',
-]);
+const CATEGORY_ORDER = {
+  rainy: ['culture', 'entertainment', 'nature', 'fitness', 'food'],
+  dry: ['nature', 'entertainment', 'culture', 'fitness', 'food'],
+};
 
 const fetchCache = new Map();
 
@@ -39,14 +40,6 @@ export function saveActivitySetting(key, value) {
   localStorage.setItem(ACTIVITY_KEY, JSON.stringify(s));
 }
 
-function weatherIsBad(forecast, settings) {
-  return (
-    forecast.tempMin < settings.minTemp
-    || forecast.precip > settings.maxPrecip
-    || forecast.windspeed > settings.maxWind
-  );
-}
-
 async function queryOverpass(lat, lon, radius, categories) {
   const cacheKey = `${lat},${lon},${radius},${[...categories].sort().join(',')}`;
   if (fetchCache.has(cacheKey)) return fetchCache.get(cacheKey);
@@ -63,48 +56,91 @@ async function queryOverpass(lat, lon, radius, categories) {
   const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
   if (!res.ok) throw new Error(`Overpass ${res.status}`);
   const data = await res.json();
-  const elements = (data.elements || []).filter((el) => el.tags?.name);
+  const elements = (data.elements || []).flatMap((el) => {
+    if (!el.tags?.name) return [];
+
+    const category = categories.find((cat) => {
+      const rules = CATEGORY_TAGS[cat] || [];
+      return rules.some(([key, values]) => {
+        const value = el.tags?.[key];
+        return value && new RegExp(`^(?:${values})$`, 'i').test(value);
+      });
+    });
+
+    return category ? [{ ...el, activityCategory: category }] : [];
+  });
   fetchCache.set(cacheKey, elements);
   return elements;
 }
 
 export async function fetchNearbyActivities(lat, lon, forecast) {
   const settings = getActivitySettings();
-  const bad = weatherIsBad(forecast, settings);
+  const raining = Number(forecast.rain) > 0;
   const elements = await queryOverpass(lat, lon, settings.radius, settings.categories);
 
   const seen = new Set();
+  const categoryCounts = new Map();
   const places = [];
-  for (const el of elements) {
-    const name = el.tags.name;
-    if (seen.has(name)) continue;
-    seen.add(name);
-    const type = el.tags.amenity || el.tags.leisure || el.tags.tourism || '';
-    if (bad && OUTDOOR_TYPES.has(type)) continue;
-    places.push({ name, type, lat: el.lat, lon: el.lon });
+
+  const prioritizedCategories = [...settings.categories].sort((left, right) => {
+    return getCategoryPriority(left, raining) - getCategoryPriority(right, raining);
+  });
+
+  for (const category of prioritizedCategories) {
+    for (const el of elements.filter((entry) => entry.activityCategory === category)) {
+      const name = el.tags.name;
+      if (seen.has(name)) continue;
+
+      const count = categoryCounts.get(category) || 0;
+      if (count >= 3) continue;
+
+      seen.add(name);
+      categoryCounts.set(category, count + 1);
+
+      const type = el.tags.amenity || el.tags.leisure || el.tags.tourism || '';
+      places.push({ name, type, category, lat: el.lat, lon: el.lon });
+
+      if (places.length >= 8) break;
+    }
+
     if (places.length >= 8) break;
   }
 
-  return { places, weatherBad: bad };
+  if (places.length < 8) {
+    for (const el of elements) {
+      const name = el.tags.name;
+      if (seen.has(name)) continue;
+
+      const category = el.activityCategory;
+      const count = categoryCounts.get(category) || 0;
+      if (count >= 3) continue;
+
+      seen.add(name);
+      categoryCounts.set(category, count + 1);
+
+      const type = el.tags.amenity || el.tags.leisure || el.tags.tourism || '';
+      places.push({ name, type, category, lat: el.lat, lon: el.lon });
+
+      if (places.length >= 8) break;
+    }
+  }
+
+  return { places, raining };
 }
 
 export function renderActivitiesPanel(container, lat, lon, forecast) {
   container.innerHTML = '<p class="activities-loading">Finding nearby activities…</p>';
 
   fetchNearbyActivities(lat, lon, forecast)
-    .then(({ places, weatherBad }) => {
+    .then(({ places, raining }) => {
+      const noteHtml = raining
+        ? '<p class="activities-weather-note">Rain is expected, so indoor activities are shown first.</p>'
+        : '<p class="activities-weather-note">No rain is expected, so outdoor activities are shown first.</p>';
+
       if (!places.length) {
-        container.innerHTML = `<p class="activities-none">${
-          weatherBad
-            ? 'Outdoor activities filtered — no indoor options found nearby.'
-            : 'No nearby activities found.'
-        }</p>${activityCredit()}`;
+        container.innerHTML = `${noteHtml}<p class="activities-none">No nearby activities found.</p>${activityCredit()}`;
         return;
       }
-
-      const noteHtml = weatherBad
-        ? '<p class="activities-weather-note">Showing indoor options only — weather exceeds thresholds.</p>'
-        : '';
 
       const listHtml = places.map(({ name, type, lat: pLat, lon: pLon }) => {
         const url = `https://www.google.com/maps/search/${encodeURIComponent(name)}/@${pLat},${pLon},16z`;
@@ -125,4 +161,10 @@ export function renderActivitiesPanel(container, lat, lon, forecast) {
 
 function activityCredit() {
   return '<p class="api-credit">Activity data from <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a> via <a href="https://overpass-api.de/" target="_blank" rel="noopener">Overpass API</a> (free, no API key required).</p>';
+}
+
+function getCategoryPriority(category, raining) {
+  const order = raining ? CATEGORY_ORDER.rainy : CATEGORY_ORDER.dry;
+  const index = order.indexOf(category);
+  return index === -1 ? order.length : index;
 }
