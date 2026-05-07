@@ -313,6 +313,7 @@ body.dark-mode .top-bar-button img {
 
 .hero-input {
   width: 100%;
+  box-sizing: border-box;
   padding: 16px 18px;
   border: 1px solid #ccc;
   border-radius: 12px;
@@ -1068,11 +1069,20 @@ body.dark-mode .site-footer {
 }
 
 .footer-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   margin-bottom: 16px;
+}
+
+.footer-nav a + .footer-separator {
+  margin: 0 8px;
 }
 
 .footer-nav a {
   color: #0066cc;
+  margin-right: 0;
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -1091,8 +1101,12 @@ body.dark-mode .footer-nav a:hover {
 }
 
 .footer-separator {
-  margin: 0 12px;
   color: #999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  line-height: 1;
 }
 
 body.dark-mode .footer-separator {
