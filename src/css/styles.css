@@ -152,7 +152,12 @@ body.dark-mode .clear-filters-button:hover {
   font: garamond, serif;
   position: absolute;
   left: 50%;
-  transform: translateX(-50%); /* fixed centering of "Tripcast" in top nav */
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #111;
+  text-decoration: none;
 }
 
 .top-bar-button {
@@ -179,7 +184,7 @@ body.dark-mode .clear-filters-button:hover {
 }
 
 .top-bar-title img {
-  height: 40px;
+  height: 36px;
   width: auto;
   display: block;
 }
@@ -331,8 +336,8 @@ body.dark-mode .top-bar-button img {
 }
 
 .hero .calendar-month {
-  background: #c0c0c0;
-  border: 1px solid #a0a0a0;
+  background: #ffffff;
+  border: 1px solid #ddd;
 }
 
 .hero .calendar-weekdays div,
@@ -480,8 +485,8 @@ body.dark-mode .date-button:disabled {
 }
 
 .date-button:disabled {
-  background: #858585;
-  color: #333;
+  background: #b8b8b8;
+  color: #555;
   cursor: not-allowed;
 }
 
