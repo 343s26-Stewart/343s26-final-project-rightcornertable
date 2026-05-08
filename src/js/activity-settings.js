@@ -8,16 +8,9 @@ const MM_TO_IN = (mm) => mm / 25.4;
 const MPH_TO_KPH = (mph) => mph * 1.60934;
 const KPH_TO_MPH = (kph) => kph / 1.60934;
 const M_TO_MILES = (m) => m / 1609.344;
-
-function formatRadiusLabelForMetric(meters) {
-  if (meters >= 1000) return `${(meters / 1000).toFixed(1).replace(/\.0$/, '')} km`;
-  return `${meters} m`;
-}
-
-function formatRadiusLabelForImperial(meters) {
-  const miles = M_TO_MILES(meters);
-  return `${miles.toFixed(2)} mi`;
-}
+const MILES_TO_M = (miles) => miles * 1609.344;
+const M_TO_KM = (m) => m / 1000;
+const KM_TO_M = (km) => km * 1000;
 
 function initActivitySettings() {
   const settings = getActivitySettings();
@@ -35,7 +28,8 @@ function initActivitySettings() {
   const precipUnitLabel = document.getElementById('activity-precip-unit');
   const maxWindInput = document.getElementById('activity-max-wind');
   const windUnitLabel = document.getElementById('activity-wind-unit');
-  const radiusSelect = document.getElementById('activity-radius');
+  const radiusInput = document.getElementById('activity-radius');
+  const radiusUnitLabel = document.getElementById('activity-radius-unit');
   const catCheckboxes = document.querySelectorAll('input[name="activity-cat"]');
   const unitsSelect = document.getElementById('units-select');
 
@@ -63,13 +57,12 @@ function initActivitySettings() {
       maxWindInput.value = displayWind;
       if (windUnitLabel) windUnitLabel.textContent = metric ? 'kph' : 'mph';
     }
-    // Radius select: values remain meters (stored), but option labels change
-    if (radiusSelect) {
-      Array.from(radiusSelect.options).forEach((opt) => {
-        const meters = parseInt(opt.value, 10);
-        opt.textContent = metric ? formatRadiusLabelForMetric(meters) : formatRadiusLabelForImperial(meters);
-      });
-      radiusSelect.value = String(settings.radius);
+    // Radius
+    if (radiusInput) {
+      radiusInput.value = metric
+        ? Number(M_TO_KM(settings.radius).toFixed(1))
+        : Number(M_TO_MILES(settings.radius).toFixed(2));
+      if (radiusUnitLabel) radiusUnitLabel.textContent = metric ? 'km' : 'mi';
     }
   }
 
@@ -114,10 +107,14 @@ function initActivitySettings() {
     });
   }
 
-  if (radiusSelect) {
-    radiusSelect.addEventListener('change', () => {
-      const v = parseInt(radiusSelect.value, 10);
-      if (!Number.isNaN(v)) saveActivitySetting('radius', v);
+  if (radiusInput) {
+    radiusInput.addEventListener('change', () => {
+      const metric = isMetric();
+      const v = parseFloat(radiusInput.value);
+      if (Number.isFinite(v) && v > 0) {
+        const meters = Math.round(metric ? KM_TO_M(v) : MILES_TO_M(v));
+        saveActivitySetting('radius', meters);
+      }
       Object.assign(settings, getActivitySettings());
       refreshDisplayFromStored();
     });
