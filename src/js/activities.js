@@ -1,6 +1,6 @@
 const ACTIVITY_KEY = 'tripcast-activity-settings';
 const UNIT_KEY = 'tripcast-units';
-const PLACES_API_KEY = 'REDACTED_API_KEY';
+const PLACES_API_KEY_STORAGE = 'tripcast-places-api-key';
 
 const CATEGORY_TYPES = {
   food:          ['cafe', 'bakery', 'restaurant'],
@@ -55,6 +55,9 @@ async function queryGooglePlaces(lat, lon, radius, categories) {
   const cacheKey = `${lat},${lon},${radius},${[...categories].sort().join(',')}`;
   if (fetchCache.has(cacheKey)) return fetchCache.get(cacheKey);
 
+  const apiKey = localStorage.getItem(PLACES_API_KEY_STORAGE) || '';
+  if (!apiKey) throw new Error('No API key set. Add your Google Places API key in Settings.');
+
   const typeToCategory = buildTypeToCategory(categories);
   const includedTypes = [...typeToCategory.keys()];
   if (!includedTypes.length) return [];
@@ -63,7 +66,7 @@ async function queryGooglePlaces(lat, lon, radius, categories) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Goog-Api-Key': PLACES_API_KEY,
+      'X-Goog-Api-Key': apiKey,
       'X-Goog-FieldMask': 'places.displayName,places.rating,places.userRatingCount,places.types,places.location',
     },
     body: JSON.stringify({
@@ -173,8 +176,11 @@ export function renderActivitiesPanel(container, lat, lon, forecast) {
 
       container.innerHTML = `${noteHtml}<ul class="activities-list">${listHtml}</ul>${activityCredit()}`;
     })
-    .catch(() => {
-      container.innerHTML = '<p class="activities-error">Could not load nearby activities.</p>';
+    .catch((err) => {
+      const msg = err?.message?.includes('API key')
+        ? err.message
+        : 'Could not load nearby activities.';
+      container.innerHTML = `<p class="activities-error">${msg}</p>`;
     });
 }
 
