@@ -15,6 +15,11 @@ const CATEGORY_ORDER = {
   dry:   ['nature', 'entertainment', 'culture', 'fitness', 'food'],
 };
 
+// Types that are primarily outdoor and should be excluded in bad weather conditions
+const OUTDOOR_TYPES = new Set([
+  'park', 'national_park', 'hiking_area', 'beach', 'botanical_garden', 'amusement_park', 'stadium',
+]);
+
 const fetchCache = new Map();
 
 export function getActivitySettings() {
@@ -54,15 +59,16 @@ function buildTypeToCategory(categories) {
   return map;
 }
 
-async function queryGooglePlaces(lat, lon, radius, categories) {
-  const cacheKey = `${lat},${lon},${radius},${[...categories].sort().join(',')}`;
+async function queryGooglePlaces(lat, lon, radius, categories, excludeOutdoor = false) {
+  const cacheKey = `${lat},${lon},${radius},${[...categories].sort().join(',')},${excludeOutdoor}`;
   if (fetchCache.has(cacheKey)) return fetchCache.get(cacheKey);
 
   const apiKey = localStorage.getItem(PLACES_API_KEY_STORAGE) || '';
   if (!apiKey) throw new Error('No API key set. Add your Google Places API key in Settings.');
 
   const typeToCategory = buildTypeToCategory(categories);
-  const includedTypes = [...typeToCategory.keys()];
+  let includedTypes = [...typeToCategory.keys()];
+  if (excludeOutdoor) includedTypes = includedTypes.filter(t => !OUTDOOR_TYPES.has(t));
   if (!includedTypes.length) return [];
 
   const res = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
@@ -117,8 +123,18 @@ async function queryGooglePlaces(lat, lon, radius, categories) {
 
 export async function fetchNearbyActivities(lat, lon, forecast) {
   const settings = getActivitySettings();
-  const raining = Number(forecast.rain) > 0;
-  const elements = await queryGooglePlaces(lat, lon, settings.radius, settings.categories);
+
+  // settings.minTemp is always °F; forecast.tempMin follows the user's display unit
+  const isMetric = (localStorage.getItem(UNIT_KEY) || 'imperial') === 'metric';
+  const tempMinF = isMetric ? forecast.tempMin * 9 / 5 + 32 : forecast.tempMin;
+
+  const tooCold = tempMinF < settings.minTemp;
+  const tooWindy = Number(forecast.windspeed) > settings.maxWind;
+  const tooWet = Number(forecast.rain) > settings.maxPrecip;
+  const excludeOutdoor = tooCold || tooWindy || tooWet;
+  const raining = tooWet;
+
+  const elements = await queryGooglePlaces(lat, lon, settings.radius, settings.categories, excludeOutdoor);
 
   const seen = new Set();
   const categoryCounts = new Map();
@@ -157,17 +173,19 @@ export async function fetchNearbyActivities(lat, lon, forecast) {
     }
   }
 
-  return { places, raining };
+  return { places, raining, excludeOutdoor };
 }
 
 export function renderActivitiesPanel(container, lat, lon, forecast) {
   container.innerHTML = '<p class="activities-loading">Finding nearby activities…</p>';
 
   fetchNearbyActivities(lat, lon, forecast)
-    .then(({ places, raining }) => {
-      const noteHtml = raining
-        ? '<p class="activities-weather-note">Rain is expected, so indoor activities are shown first.</p>'
-        : '<p class="activities-weather-note">No rain is expected, so outdoor activities are shown first.</p>';
+    .then(({ places, raining, excludeOutdoor }) => {
+      const noteHtml = excludeOutdoor
+        ? '<p class="activities-weather-note">Outdoor activities are hidden — conditions exceed your weather thresholds.</p>'
+        : raining
+          ? '<p class="activities-weather-note">Rain is expected, so indoor activities are shown first.</p>'
+          : '<p class="activities-weather-note">No rain expected, so outdoor activities are shown first.</p>';
 
       if (!places.length) {
         container.innerHTML = `${noteHtml}<p class="activities-none">No nearby activities found.</p>${activityCredit()}`;
