@@ -67,10 +67,10 @@ async function queryGooglePlaces(lat, lon, radius, categories) {
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
-      'X-Goog-FieldMask': 'places.displayName,places.rating,places.userRatingCount,places.types,places.location',
+      'X-Goog-FieldMask': 'places.displayName,places.rating,places.userRatingCount,places.primaryType,places.location',
     },
     body: JSON.stringify({
-      includedTypes,
+      includedPrimaryTypes: includedTypes,
       maxResultCount: 20,
       rankPreference: 'POPULARITY',
       locationRestriction: {
@@ -82,19 +82,26 @@ async function queryGooglePlaces(lat, lon, radius, categories) {
     }),
   });
 
-  if (!res.ok) throw new Error(`Places API ${res.status}`);
+  if (!res.ok) {
+    let message = `Places API error ${res.status}`;
+    try {
+      const errData = await res.json();
+      if (errData?.error?.message) message = errData.error.message;
+    } catch {}
+    throw new Error(message);
+  }
   const data = await res.json();
   const raw = data.places || [];
 
   const elements = raw
     .filter(p => (p.rating ?? 0) >= 4.0 && (p.userRatingCount ?? 0) >= 100)
     .flatMap(p => {
-      const placeTypes = p.types || [];
-      const category = placeTypes.map(t => typeToCategory.get(t)).find(Boolean);
+      const primaryType = p.primaryType ?? '';
+      const category = typeToCategory.get(primaryType);
       if (!category) return [];
       return [{
         name: p.displayName?.text ?? 'Unknown',
-        type: placeTypes.find(t => typeToCategory.has(t)) ?? placeTypes[0] ?? '',
+        type: primaryType,
         category,
         lat: p.location?.latitude,
         lon: p.location?.longitude,
@@ -177,11 +184,13 @@ export function renderActivitiesPanel(container, lat, lon, forecast) {
       container.innerHTML = `${noteHtml}<ul class="activities-list">${listHtml}</ul>${activityCredit()}`;
     })
     .catch((err) => {
-      const msg = err?.message?.includes('API key')
-        ? err.message
-        : 'Could not load nearby activities.';
-      container.innerHTML = `<p class="activities-error">${msg}</p>`;
+      const msg = err?.message || 'Could not load nearby activities.';
+      container.innerHTML = `<p class="activities-error">${escapeHtml(msg)}</p>`;
     });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function activityCredit() {
