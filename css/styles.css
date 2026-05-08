@@ -35,7 +35,8 @@ body.dark-mode .saved-plans-container .empty-message {
 }
 
 body.dark-mode select,
-body.dark-mode .hero-input {
+body.dark-mode .hero-input,
+body.dark-mode .settings-row input[type="password"] {
   background: #4c4c4c;
   color: #fff;
   border-color: #666;
@@ -272,13 +273,16 @@ body.dark-mode .top-bar-button img {
 
 }
 
-.settings-row select {
+.settings-row select,
+.settings-row input[type="password"] {
   width: 100%;
   padding: 14px 16px;
   border: 1px solid #ccc;
   border-radius: 12px;
   background: #fafafa;
   font-size: 1rem;
+  font-family: Garamond, serif;
+  box-sizing: border-box;
 }
 
 .secret-button:hover {
