@@ -18,9 +18,12 @@ const CATEGORY_ORDER = {
 const fetchCache = new Map();
 
 export function getActivitySettings() {
-  const unit = localStorage.getItem(UNIT_KEY) || 'fahrenheit';
+  // Stored activity thresholds use imperial-style units by default so
+  // the rest of the app (weather + activity filtering) doesn't need
+  // to change. Temperature stored in °F, precipitation in inches,
+  // wind in mph, radius in meters.
   const defaults = {
-    minTemp: unit === 'celsius' ? 0 : 32,
+    minTemp: 32,
     maxPrecip: 0.1,
     maxWind: 30,
     radius: 5000,
