@@ -24,7 +24,7 @@ let currentPlan = null;
 const isPlanPage = window.location.pathname.endsWith('plan.html');
 
 function getSavedUnits() {
-  return localStorage.getItem(UNIT_KEY) || 'fahrenheit';
+  return localStorage.getItem(UNIT_KEY) || 'imperial';
 }
 
 function saveInitTrip(destination, date) {
@@ -67,8 +67,10 @@ if (form) {
     }
 
     const unit = getSavedUnits();
+    // map global measurement setting to weather.js temperatureUnit ('fahrenheit'|'celsius')
+    const tempUnitParam = unit === 'metric' ? 'celsius' : 'fahrenheit';
     try {
-      const { location, forecast } = await getWeatherForTrip(destination, date, unit);
+      const { location, forecast } = await getWeatherForTrip(destination, date, tempUnitParam);
       currentPlan = {
         id: `plan-${Date.now()}`,
         destination,
@@ -99,8 +101,9 @@ async function initFromRedirect() {
   }
 
   const unit = getSavedUnits();
+  const tempUnitParam = unit === 'metric' ? 'celsius' : 'fahrenheit';
   try {
-    const { location, forecast } = await getWeatherForTrip(initTrip.destination, initTrip.date, unit);
+    const { location, forecast } = await getWeatherForTrip(initTrip.destination, initTrip.date, tempUnitParam);
     currentPlan = {
       id: `plan-${Date.now()}`,
       destination: initTrip.destination,

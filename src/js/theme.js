@@ -7,7 +7,7 @@ function getSavedTheme() {
 }
 
 function getSavedUnits() {
-    return localStorage.getItem(UNIT_KEY) || 'fahrenheit';
+    return localStorage.getItem(UNIT_KEY) || 'imperial';
 }
 
 function getSavedSecretState() {
