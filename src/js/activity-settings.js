@@ -59,6 +59,8 @@ function initActivitySettings() {
     }
     // Radius
     if (radiusInput) {
+      radiusInput.min = '0.1';
+      radiusInput.max = metric ? '50' : String(Number(M_TO_MILES(50000).toFixed(2)));
       radiusInput.value = metric
         ? Number(M_TO_KM(settings.radius).toFixed(1))
         : Number(M_TO_MILES(settings.radius).toFixed(2));
@@ -112,7 +114,7 @@ function initActivitySettings() {
       const metric = isMetric();
       const v = parseFloat(radiusInput.value);
       if (Number.isFinite(v) && v > 0) {
-        const meters = Math.round(metric ? KM_TO_M(v) : MILES_TO_M(v));
+        const meters = Math.min(50000, Math.round(metric ? KM_TO_M(v) : MILES_TO_M(v)));
         saveActivitySetting('radius', meters);
       }
       Object.assign(settings, getActivitySettings());
@@ -128,6 +130,16 @@ function initActivitySettings() {
       saveActivitySetting('categories', selected);
     });
   });
+
+  const resetButton = document.getElementById('reset-activity-settings');
+  if (resetButton) {
+    resetButton.addEventListener('click', () => {
+      localStorage.removeItem('tripcast-activity-settings');
+      Object.assign(settings, getActivitySettings());
+      catCheckboxes.forEach(cb => { cb.checked = settings.categories.includes(cb.value); });
+      refreshDisplayFromStored();
+    });
+  }
 
   // When the global units select changes (temperature/metric toggle), refresh UI
   if (unitsSelect) {
