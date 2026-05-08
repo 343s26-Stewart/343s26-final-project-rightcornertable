@@ -35,10 +35,10 @@
             </div>
 
             <div class="settings-row">
-                <label for="units-select">Temperature</label>
+                <label for="units-select">Measurements</label>
                 <select id="units-select" name="units">
-                    <option value="fahrenheit">Fahrenheit</option>
-                    <option value="celsius">Celsius</option>
+                    <option value="imperial">Imperial (°F, in, mph)</option>
+                    <option value="metric">Metric (°C, mm, kph)</option>
                 </select>
             </div>
 
@@ -62,7 +62,7 @@
                 <label for="activity-max-precip">Max. Precipitation</label>
                 <div class="settings-input-with-unit">
                     <input type="number" id="activity-max-precip" step="0.01" min="0" />
-                    <span>in</span>
+                    <span id="activity-precip-unit">in</span>
                 </div>
             </div>
 
@@ -70,7 +70,7 @@
                 <label for="activity-max-wind">Max. Wind Speed</label>
                 <div class="settings-input-with-unit">
                     <input type="number" id="activity-max-wind" step="1" min="0" />
-                    <span>mph</span>
+                    <span id="activity-wind-unit">mph</span>
                 </div>
             </div>
 
