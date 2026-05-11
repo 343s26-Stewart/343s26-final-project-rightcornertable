@@ -1,3 +1,9 @@
+/*
+* Used to manage theme settings and the "secret background"easter egg. Saves
+* user preferences in localStorage and applies them on page load. Also handles
+* responsive adjustments for the secret background based on orientation changes.
+*/
+
 const THEME_KEY = 'tripcast-theme';
 const UNIT_KEY = 'tripcast-units';
 const SECRET_BG_KEY = 'tripcast-secret-bg';

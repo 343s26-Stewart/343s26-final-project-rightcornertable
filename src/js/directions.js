@@ -1,3 +1,5 @@
+/* Used to open Google Maps directions in a new tab */
+
 export function openDirections(destLat, destLon, btn) {
   if (!navigator.geolocation) {
     alert('Geolocation is not supported by your browser.');

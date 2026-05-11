@@ -1,5 +1,13 @@
 import { getActivitySettings, saveActivitySetting } from './activities.js';
 
+/*
+* Used to manage the activity settings form in the settings page, including:
+* - Fetching and displaying stored settings from localStorage
+* - Handling user input and converting between metric and imperial units for display and storage
+* - Saving updated settings to localStorage
+* - Allowing users to reset settings to defaults
+*/
+
 // Conversions (stored units are: temperature = °F, precip = inches, wind = mph, radius = meters)
 /**
  * EXCERPT: All settings are stored in imperial units for consistency, but the

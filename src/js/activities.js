@@ -1,7 +1,15 @@
+/**
+ * activities.js
+ * Manages activity settings and Google Places API queries. Used to fetch
+ * nearby activities based on the user's location and weather forecast, and
+ *  filter them according to user-defined thresholds for temperature, precipitation,
+ *  and wind. Also handles the storage and retrieval of activity-related settings
+ *  in localStorage, including unit conversions for display purposes.
+ */
+
 const ACTIVITY_KEY = 'tripcast-activity-settings';
 const UNIT_KEY = 'tripcast-units';
 const PLACES_API_KEY_STORAGE = 'tripcast-places-api-key';
-
 
 /*
 EXCERPT: Uses custom kinds of activities instead of Google's categories
