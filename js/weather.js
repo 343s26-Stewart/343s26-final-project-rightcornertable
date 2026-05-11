@@ -31,12 +31,15 @@ async function geocode(placeName) {
   const cityOnly = placeName.split(',')[0].trim();
   const url = `${GEO_URL}?name=${encodeURIComponent(cityOnly)}&count=1&language=en&format=json`;
   const res = await fetch(url);
+
+  // EXCERPT: Handles weird cases where the API returns different statuses but no data
   if (!res.ok) throw new Error(`Geocoding request failed (${res.status})`);
   const data = await res.json();
+
   if (!data.results || data.results.length === 0) {
     throw new Error(`Could not find a location named "${placeName}". Try a city and country (e.g. "Paris, France").`);
   }
-  
+
   const { latitude, longitude, name, admin1, country } = data.results[0];
   const displayName = [name, admin1, country].filter(Boolean).join(', ');
   return { lat: latitude, lon: longitude, displayName };
