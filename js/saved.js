@@ -293,6 +293,7 @@ function formatTime(isoString) {
   });
 }
 
+// CHALLENGE: This thing makes an image. Trying to handle all the continuity with an image was difficult
 function drawSavedChart(canvas, hourly, tempUnit, date) {
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
