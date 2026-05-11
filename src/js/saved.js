@@ -33,6 +33,7 @@ function exportAll() {
   downloadJSON(plans, `tripcast-all-plans-${new Date().toISOString().slice(0, 10)}.json`);
 }
 
+/**EXCERPT: Imports saved plans from a JSON file. Keeps data persistence and maitains persistence */
 function importPlans(file) {
   const reader = new FileReader();
   reader.onload = (e) => {

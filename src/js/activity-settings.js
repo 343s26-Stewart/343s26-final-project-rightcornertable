@@ -1,6 +1,12 @@
 import { getActivitySettings, saveActivitySetting } from './activities.js';
 
 // Conversions (stored units are: temperature = °F, precip = inches, wind = mph, radius = meters)
+/**
+ * EXCERPT: All settings are stored in imperial units for consistency, but the
+ *  UI allows users to input in metric if they prefer. These functions convert
+ *  between the two for display and storage purposes. This way the rest of the
+ *  app (weather fetching, activity filtering) can work with a consistent set of units without worrying about the display preferences.
+ */
 const F_TO_C = (f) => (f - 32) * 5 / 9;
 const C_TO_F = (c) => (c * 9 / 5) + 32;
 const IN_TO_MM = (inch) => inch * 25.4;

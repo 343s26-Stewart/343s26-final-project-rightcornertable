@@ -2,6 +2,14 @@ const ACTIVITY_KEY = 'tripcast-activity-settings';
 const UNIT_KEY = 'tripcast-units';
 const PLACES_API_KEY_STORAGE = 'tripcast-places-api-key';
 
+
+/*
+EXCERPT: Uses custom kinds of activities instead of Google's categories
+directly, since many Google types are too specific (e.g. "movie_theater")
+or too vague ("point_of_interest") to be useful for filtering. Each category
+maps to multiple Google types, and the user selects categories in settings instead
+of individual types.
+*/
 const CATEGORY_TYPES = {
   food:          ['cafe', 'bakery', 'restaurant'],
   nature:        ['park', 'national_park', 'hiking_area', 'botanical_garden', 'zoo', 'aquarium', 'beach'],
