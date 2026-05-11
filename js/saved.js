@@ -1,6 +1,7 @@
 /**
  * saved.js
  * Renders saved Tripcast plans from localStorage.
+ * Allows exporting individual plans or all plans as JSON, and importing plans from a JSON file.
  */
 import { getSavedPlans, deletePlan, savePlan } from './storage.js';
 import { openDirections } from './directions.js';
