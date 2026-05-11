@@ -8,13 +8,14 @@
   --bg-alt:          #f0ebe1;
   --surface:         #ffffff;
   --surface-raised:  #fdf9f5;
-  --accent:          #c94f28;
-  --accent-hover:    #a83e1e;
-  --accent-light:    rgba(201, 79, 40, 0.10);
+  --accent:          #a83e1e;
+  --accent-hover:    #8f3418;
+  --accent-light:    rgba(168, 62, 30, 0.12);
+  --on-accent:       #ffffff;
   --navy:            #0e1e38;
   --text:            #0e1e38;
-  --text-muted:      #687d96;
-  --text-faint:      #9baec2;
+  --text-muted:      #4f647d;
+  --text-faint:      #55697f;
   --border:          #ddd5c8;
   --border-subtle:   #ede8e0;
   --error:           #b91c1c;
@@ -39,10 +40,11 @@ body.dark-mode {
   --accent:          #e87840;
   --accent-hover:    #f5935a;
   --accent-light:    rgba(232, 120, 64, 0.13);
+  --on-accent:       #07111c;
   --navy:            #dce9f6;
   --text:            #dce9f6;
-  --text-muted:      #7b9ab8;
-  --text-faint:      #3d5a76;
+  --text-muted:      #a9c0d8;
+  --text-faint:      #89a5c4;
   --border:          rgba(220, 233, 246, 0.10);
   --border-subtle:   rgba(220, 233, 246, 0.06);
   --error:           #f87171;
@@ -234,21 +236,21 @@ body.dark-mode.homepage .hero-title {
 
 /* Hero input on homepage dark bg (dark mode only) */
 body.dark-mode.homepage .hero-input {
-  background: rgba(255, 255, 255, 0.09);
-  border: 1.5px solid rgba(255, 255, 255, 0.20);
-  color: #ffffff;
+  background: rgba(7, 17, 28, 0.60);
+  border: 1.5px solid rgba(220, 233, 246, 0.24);
+  color: #f8fbff;
   backdrop-filter: blur(8px);
 }
 
 body.dark-mode.homepage .hero-input::placeholder {
-  color: rgba(255, 255, 255, 0.50);
+  color: rgba(220, 233, 246, 0.80);
   font-style: italic;
 }
 
 body.dark-mode.homepage .hero-input:focus {
-  background: rgba(255, 255, 255, 0.13);
-  border-color: rgba(255, 255, 255, 0.50);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  background: rgba(7, 17, 28, 0.74);
+  border-color: rgba(220, 233, 246, 0.40);
+  box-shadow: 0 0 0 3px rgba(232, 120, 64, 0.24);
 }
 
 .hero-label {
@@ -271,7 +273,7 @@ body.dark-mode.homepage .hero-input:focus {
   border: none;
   border-radius: var(--r-lg);
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 400;
@@ -403,58 +405,59 @@ body.dark-mode.homepage .hero-input:focus {
 
 .date-button.selected {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   border-color: transparent;
   font-weight: 600;
 }
 
 .date-button:disabled {
   background: transparent;
-  color: var(--text-faint);
+  color: var(--text-muted);
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: 1;
 }
 
 /* Calendar on homepage dark gradient (dark mode only) */
 body.dark-mode.homepage .calendar-month {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(7, 17, 28, 0.58);
+  border: 1px solid rgba(220, 233, 246, 0.16);
   backdrop-filter: blur(10px);
   box-shadow: none;
 }
 
 body.dark-mode.homepage .calendar-month h2 {
-  color: rgba(255, 255, 255, 0.60);
+  color: rgba(220, 233, 246, 0.82);
 }
 
 body.dark-mode.homepage .calendar-weekdays div {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(220, 233, 246, 0.70);
 }
 
 body.dark-mode.homepage .calendar-cell {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(248, 251, 255, 0.96);
 }
 
 body.dark-mode.homepage .date-button {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(13, 27, 44, 0.92);
+  color: rgba(248, 251, 255, 0.96);
   border-color: transparent;
 }
 
 body.dark-mode.homepage .date-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(24, 41, 65, 0.95);
   color: #ffffff;
   transform: scale(1.06);
 }
 
 body.dark-mode.homepage .date-button.selected {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
 }
 
 body.dark-mode.homepage .date-button:disabled {
-  background: rgba(255, 255, 255, 0.02);
-  color: rgba(255, 255, 255, 0.20);
+  background: rgba(13, 27, 44, 0.56);
+  color: rgba(220, 233, 246, 0.62);
+  opacity: 1;
 }
 
 .selected-date-display {
@@ -465,7 +468,7 @@ body.dark-mode.homepage .date-button:disabled {
 }
 
 body.dark-mode.homepage .selected-date-display {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(220, 233, 246, 0.78);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -890,7 +893,7 @@ body.dark-mode.homepage .selected-date-display {
   align-items: center;
   justify-content: center;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   border: none;
   border-radius: var(--r-md);
   padding: 11px 22px;
@@ -930,7 +933,10 @@ body.dark-mode.homepage .selected-date-display {
 }
 
 #directions-button:disabled {
-  opacity: 0.5;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  border-color: var(--border);
+  opacity: 1;
   cursor: not-allowed;
   transform: none;
 }
@@ -957,7 +963,7 @@ body.dark-mode.homepage .selected-date-display {
   cursor: pointer;
   border: 1.5px solid var(--accent);
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   transition: background 0.15s, transform 0.1s;
 }
 
@@ -1124,7 +1130,10 @@ body.dark-mode.homepage .selected-date-display {
 }
 
 .directions-plan-button:disabled {
-  opacity: 0.5;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  border-color: var(--border);
+  opacity: 1;
   cursor: not-allowed;
   transform: none;
 }
